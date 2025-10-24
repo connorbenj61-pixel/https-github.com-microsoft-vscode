@@ -42,7 +42,7 @@ If you're interested in contributing to VS Code:
 - **Documentation**: [https://code.visualstudio.com/docs](https://code.visualstudio.com/docs)
 - **API Documentation**: [https://code.visualstudio.com/api](https://code.visualstudio.com/api)
 - **Updates**: [https://code.visualstudio.com/updates](https://code.visualstudio.com/updates)
-- **Blog**: [https://code.visualstudio.com/blogs](https://code.visualstudio.com/blogs)
+- **Blog**: [https://code.visualstudio.com/blog](https://code.visualstudio.com/blog)
 
 ## Community
 
