@@ -1,0 +1,15 @@
+# Requirements for Amalgamation Game
+
+# Core dependencies (minimal)
+# tkinter comes bundled with Python by default
+# No external ML libraries required - all AI built from scratch
+
+# Optional: For future enhancements
+# numpy>=1.19.0  # For advanced matrix operations
+# pillow>=8.0.0  # For image processing if extended
+# scipy>=1.5.0   # For advanced statistical analysis
+
+# Development
+pytest>=6.0.0  # For testing
+black>=21.0.0  # For code formatting
+pylint>=2.0.0  # For linting
