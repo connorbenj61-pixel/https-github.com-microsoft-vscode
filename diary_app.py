@@ -195,6 +195,143 @@ class DiaryDatabase:
             print(f"Error saving entries: {e}")
 
 
+class DiaryBot:
+    """AI Chatbot for emotional support and guidance"""
+    
+    # Bot responses for different contexts
+    GREETING_RESPONSES = {
+        "hello": "👋 Hello! I'm your personal diary assistant. How are you feeling today?",
+        "hi": "Hey there! 😊 What's on your mind today?",
+        "hey": "Hi! I'm here to listen. What would you like to talk about?",
+        "how are you": "I'm here and ready to listen! How can I help you today?",
+    }
+    
+    MOOD_RESPONSES = {
+        "sad": "I'm sorry you're feeling down. 💙 Would you like to talk about what's bothering you?",
+        "happy": "That's wonderful! 🎉 What made your day special?",
+        "stressed": "Stress can be tough. 😟 Let's talk about what's causing it.",
+        "anxious": "Anxiety is challenging. 💭 Remember to breathe deeply. Want to share more?",
+        "excited": "Excitement is great! ✨ Tell me about what's got you energized!",
+        "tired": "Rest is important! 😴 Take care of yourself. What's been draining your energy?",
+        "confused": "Confusion is normal. 🤔 Sometimes talking it out helps. I'm listening.",
+        "grateful": "Gratitude is beautiful! 🙏 It's wonderful to see you appreciating things.",
+    }
+    
+    ENCOURAGING_PHRASES = [
+        "You're doing great! Keep going! 💪",
+        "Remember, it's okay to feel what you're feeling. 🫂",
+        "Every day is a new opportunity for growth. 🌱",
+        "You have the strength to overcome challenges. ⭐",
+        "Be kind to yourself - you deserve it. 💖",
+        "Your feelings matter and are valid. ✨",
+        "Progress is progress, no matter how small. 📈",
+        "You're braver than you believe. 🦁",
+    ]
+    
+    REFLECTION_PROMPTS = [
+        "What's one thing you're grateful for today?",
+        "How did today challenge you to grow?",
+        "What made you smile today?",
+        "What's something you'd do differently tomorrow?",
+        "Who made a positive impact on your day?",
+        "What are you most proud of lately?",
+        "What brings you peace and calm?",
+        "How can you practice self-care this week?",
+    ]
+    
+    COPING_STRATEGIES = {
+        "stress": [
+            "Try deep breathing: inhale for 4, hold for 4, exhale for 4",
+            "Take a short walk to clear your mind",
+            "Write down what's stressing you",
+            "Talk to someone you trust",
+            "Do something you enjoy",
+        ],
+        "anxiety": [
+            "Grounding technique: name 5 things you see, 4 you hear, 3 you feel",
+            "Progressive muscle relaxation",
+            "Meditation or mindfulness practice",
+            "Focus on what you can control",
+            "Limit caffeine intake",
+        ],
+        "sadness": [
+            "Connect with someone you care about",
+            "Engage in activities you enjoy",
+            "Practice self-compassion",
+            "Spend time in nature",
+            "Create something meaningful",
+        ],
+        "fatigue": [
+            "Get adequate sleep (7-9 hours)",
+            "Stay hydrated throughout the day",
+            "Move your body gently",
+            "Eat nutritious meals",
+            "Take regular breaks",
+        ],
+    }
+    
+    @staticmethod
+    def generate_response(user_message: str, current_mood: int = 3, recent_entries: List[DiaryEntry] = None) -> str:
+        """Generate contextual chatbot response"""
+        message_lower = user_message.lower().strip()
+        
+        # Check for greetings
+        for greeting, response in DiaryBot.GREETING_RESPONSES.items():
+            if greeting in message_lower:
+                return response
+        
+        # Check for mood-related keywords
+        for mood_word, response in DiaryBot.MOOD_RESPONSES.items():
+            if mood_word in message_lower:
+                return response
+        
+        # Check for help requests
+        if any(word in message_lower for word in ["help", "support", "struggling", "need help"]):
+            return "I'm here to help! 🤝 Tell me more about what you're struggling with. Remember, you don't have to face this alone."
+        
+        # Check for gratitude
+        if any(word in message_lower for word in ["thank", "grateful", "appreciate", "blessed"]):
+            return "That's beautiful! 🌟 Gratitude is so powerful. Keep nurturing that positive mindset!"
+        
+        # Check for achievements
+        if any(word in message_lower for word in ["won", "achieved", "succeeded", "completed", "proud"]):
+            return "Congratulations! 🏆 That's amazing! Tell me more about your achievement - I'd love to hear how you did it!"
+        
+        # Check for pain/difficulty
+        if any(word in message_lower for word in ["hurts", "painful", "struggling", "difficult", "hard"]):
+            return "It sounds like you're going through something tough. 💙 I'm listening. What's been the hardest part?"
+        
+        # Random encouraging phrase if nothing else matches
+        import random
+        if len(user_message) > 10:  # Substantial input
+            return random.choice(DiaryBot.ENCOURAGING_PHRASES)
+        else:
+            return "Tell me more! I'm here to listen. What's on your mind? 👂"
+    
+    @staticmethod
+    def get_reflection_prompt() -> str:
+        """Get a daily reflection prompt"""
+        import random
+        return random.choice(DiaryBot.REFLECTION_PROMPTS)
+    
+    @staticmethod
+    def get_coping_strategy(mood_level: int) -> str:
+        """Get coping strategies based on mood"""
+        if mood_level <= 2:  # Poor or terrible
+            strategies = DiaryBot.COPING_STRATEGIES.get("sadness", [])
+            title = "💙 COPING STRATEGIES FOR DIFFICULT MOMENTS"
+        elif mood_level == 3:  # Neutral
+            strategies = DiaryBot.COPING_STRATEGIES.get("stress", [])
+            title = "🌱 STRATEGIES FOR BALANCE"
+        else:  # Good or excellent
+            return "🎉 You're doing great! Keep enjoying this positive momentum!"
+        
+        response = f"\n{title}\n{'━' * 40}\n"
+        for i, strategy in enumerate(strategies, 1):
+            response += f"{i}. {strategy}\n"
+        return response
+
+
 class InsightGenerator:
     """Generate AI insights from diary entries"""
     
@@ -357,6 +494,9 @@ class AutonomousDiaryUI:
         
         # Tab 4: Insights
         self._create_insights_tab()
+        
+        # Tab 5: Chatbot
+        self._create_chatbot_tab()
     
     def _create_write_tab(self):
         """Create diary writing interface"""
@@ -626,6 +766,175 @@ class AutonomousDiaryUI:
         
         # Load insights
         self._refresh_insights()
+    
+    def _create_chatbot_tab(self):
+        """Create chatbot interface for conversations and support"""
+        frame = tk.Frame(self.notebook, bg='#16213e')
+        self.notebook.add(frame, text="🤖 Chat Assistant")
+        
+        # Chat display area
+        chat_frame = tk.Frame(frame, bg='#16213e')
+        chat_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        
+        tk.Label(
+            chat_frame,
+            text="💬 Chat with Your Diary Assistant",
+            font=("Arial", 11, "bold"),
+            fg='#16c784',
+            bg='#16213e'
+        ).pack(anchor=tk.W)
+        
+        # Chat history display
+        self.chat_display = scrolledtext.ScrolledText(
+            chat_frame,
+            font=("Arial", 10),
+            bg='#0f3460',
+            fg='#16c784',
+            wrap=tk.WORD,
+            height=20,
+            relief=tk.FLAT
+        )
+        self.chat_display.pack(fill=tk.BOTH, expand=True, pady=5)
+        self.chat_display.config(state=tk.DISABLED)
+        
+        # Input area
+        input_frame = tk.Frame(frame, bg='#16213e')
+        input_frame.pack(fill=tk.X, padx=20, pady=10)
+        
+        tk.Label(
+            input_frame,
+            text="Your message:",
+            font=("Arial", 10, "bold"),
+            fg='#16c784',
+            bg='#16213e'
+        ).pack(anchor=tk.W)
+        
+        # Message input with send button
+        message_frame = tk.Frame(input_frame, bg='#16213e')
+        message_frame.pack(fill=tk.X, pady=5)
+        
+        self.chat_input = tk.Entry(
+            message_frame,
+            font=("Arial", 10),
+            bg='#0f3460',
+            fg='#16c784',
+            insertbackground='#16c784',
+            relief=tk.FLAT
+        )
+        self.chat_input.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+        self.chat_input.bind('<Return>', lambda e: self._send_chat_message())
+        
+        send_btn = tk.Button(
+            message_frame,
+            text="📤 Send",
+            command=self._send_chat_message,
+            bg='#16c784',
+            fg='#0f3460',
+            font=("Arial", 10, "bold"),
+            padx=15,
+            relief=tk.FLAT
+        )
+        send_btn.pack(side=tk.LEFT)
+        
+        # Quick prompts
+        prompts_frame = tk.Frame(frame, bg='#16213e')
+        prompts_frame.pack(fill=tk.X, padx=20, pady=10)
+        
+        tk.Label(
+            prompts_frame,
+            text="Quick Prompts:",
+            font=("Arial", 10, "bold"),
+            fg='#16c784',
+            bg='#16213e'
+        ).pack(anchor=tk.W)
+        
+        buttons_frame = tk.Frame(prompts_frame, bg='#16213e')
+        buttons_frame.pack(fill=tk.X, pady=5)
+        
+        prompts = [
+            ("💭 Reflection", lambda: self._send_chat_message(DiaryBot.get_reflection_prompt())),
+            ("💪 Coping Tips", lambda: self._send_chat_message("Show me coping strategies")),
+            ("🎯 Help", lambda: self._send_chat_message("I need support")),
+            ("😊 Gratitude", lambda: self._send_chat_message("Tell me something positive")),
+        ]
+        
+        for label, command in prompts:
+            btn = tk.Button(
+                buttons_frame,
+                text=label,
+                command=command,
+                bg='#0f3460',
+                fg='#16c784',
+                font=("Arial", 9),
+                padx=10,
+                relief=tk.FLAT,
+                borderwidth=1
+            )
+            btn.pack(side=tk.LEFT, padx=5)
+        
+        # Load initial greeting
+        self._initialize_chatbot()
+    
+    def _initialize_chatbot(self):
+        """Initialize chatbot with greeting"""
+        greeting = f"""
+╔════════════════════════════════════════════════════════════════╗
+║           🤖 AUTONOMOUS DIARY CHAT ASSISTANT 🤖               ║
+║                                                                ║
+║  I'm here to listen, support, and help you reflect on your    ║
+║  thoughts and feelings. Feel free to share anything!          ║
+╚════════════════════════════════════════════════════════════════╝
+
+ASSISTANT: Hello! 👋 I'm your Autonomous Diary Chat Assistant. I'm here to:
+  • Listen to your thoughts and feelings
+  • Provide emotional support and encouragement
+  • Help you reflect on your experiences
+  • Offer coping strategies when you need them
+  • Celebrate your wins and achievements
+
+What's on your mind today? Feel free to share anything!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"""
+        self._add_to_chat(greeting, is_bot=True)
+    
+    def _send_chat_message(self, preset_message: str = None):
+        """Send a message and get bot response"""
+        user_message = preset_message or self.chat_input.get().strip()
+        
+        if not user_message:
+            return
+        
+        # Add user message to chat
+        self._add_to_chat(f"YOU: {user_message}\n", is_bot=False)
+        
+        # Generate bot response
+        bot_response = DiaryBot.generate_response(
+            user_message,
+            self.mood_var.get() if hasattr(self, 'mood_var') else 3,
+            self.db.get_recent_entries(10) if hasattr(self, 'db') else []
+        )
+        
+        # Check for specific commands
+        if "coping" in user_message.lower() or "strategies" in user_message.lower():
+            bot_response = DiaryBot.get_coping_strategy(self.mood_var.get() if hasattr(self, 'mood_var') else 3)
+        elif "reflection" in user_message.lower() or "prompt" in user_message.lower():
+            bot_response = f"REFLECTION PROMPT: {DiaryBot.get_reflection_prompt()}\n\nTake your time thinking about this. You can write your thoughts in the Write Entry tab!"
+        
+        # Add bot response
+        self._add_to_chat(f"ASSISTANT: {bot_response}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n", is_bot=True)
+        
+        # Clear input
+        if not preset_message:
+            self.chat_input.delete(0, tk.END)
+            self.chat_input.focus()
+    
+    def _add_to_chat(self, message: str, is_bot: bool = False):
+        """Add message to chat display"""
+        self.chat_display.config(state=tk.NORMAL)
+        self.chat_display.insert(tk.END, message)
+        self.chat_display.see(tk.END)
+        self.chat_display.config(state=tk.DISABLED)
     
     def _update_mood_label(self, value):
         """Update mood label based on scale"""
