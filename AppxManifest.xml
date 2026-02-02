@@ -1,0 +1,32 @@
+Name: Autonomous Diary
+PublisherName: Personal Software
+PublisherDisplayName: Personal Software
+Description: An AI-powered personal journal application with sentiment analysis, emotional intelligence tracking, and intelligent chatbot support.
+
+Tile:
+  ShortName: Autonomous Diary
+  Description: AI-Powered Journaling with Emotional Intelligence
+  Image: Square150x150Logo.png
+
+Logo: Square44x44Logo.png
+
+Version: 1.0.0.0
+
+Dependencies:
+  - Windows 10 (Build 10240) or later
+
+Capabilities:
+  - documentsLibrary
+  - picturesLibrary
+  
+Visual Elements:
+  DisplayName: Autonomous Diary
+  Square150x150Logo: Square150x150Logo.png
+  Square44x44Logo: Square44x44Logo.png
+  Description: Personal journal with AI insights and chatbot support
+  BackgroundColor: #1a1a2e
+
+TargetDeviceFamily:
+  Name: Windows.Desktop
+  MinVersion: 10.0.10240.0
+  MaxVersionTested: 10.0.22621.0
