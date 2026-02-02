@@ -1,0 +1,30 @@
+# Build and distribution artifacts
+build/
+dist/
+*.spec
+*.pyc
+__pycache__/
+*.egg-info/
+.eggs/
+
+# Distribution archives
+*.zip
+*.tar.gz
+
+# Python cache
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
