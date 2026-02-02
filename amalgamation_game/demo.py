@@ -183,13 +183,13 @@ Ready for Distribution
         
         portrait = tk.Label(
             left_frame,
-            text=self.avatar_display.portrait,
+            text=self.avatar_display.render_avatar_portrait(),
             font=("Courier", 9),
             fg='#16c784',
             bg='#0f3460',
-            justify=tk.CENTER
+            justify=tk.LEFT
         )
-        portrait.pack(pady=10)
+        portrait.pack(pady=10, fill=tk.BOTH)
         
         # Right side - Stats
         right_frame = tk.Frame(frame, bg='#16213e')
@@ -212,10 +212,10 @@ Ready for Distribution
 BASE STATISTICS:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name:          {self.player_avatar.name}
-HP:            {self.player_avatar.current_hp}/{self.player_avatar.max_hp}
-Mana:          {self.player_avatar.current_mana}/{self.player_avatar.max_mana}
+HP:            {self.player_avatar.current_health}/{self.player_avatar.max_health}
+Mana:          {self.player_avatar.mana}/{self.player_avatar.max_mana}
 Armor Class:   {self.player_avatar.armor_class}
-Magic Power:   {self.player_avatar.magic_power}
+Magic Power:   {self.player_avatar.magical_power}
 
 MEDICAL SPECIALTIES:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -239,9 +239,9 @@ MEDICAL SPECIALTIES:
 
 HEALING INVENTORY:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🧪 Health Potions:  {self.player_avatar.healing_inventory['potions']}x
-🧪 Antidotes:       {self.player_avatar.healing_inventory['antidotes']}x
-📜 Healing Scrolls:  {self.player_avatar.healing_inventory['scrolls']}x
+🧪 Health Potions:  {self.player_avatar.healing_potions}x
+🧪 Antidotes:       {self.player_avatar.antidotes}x
+📜 Healing Scrolls:  {self.player_avatar.restoration_scrolls}x
 
 TIER: {self.player_avatar.medical_tier.value}
 """
