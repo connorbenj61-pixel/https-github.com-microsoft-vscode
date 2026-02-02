@@ -9,6 +9,11 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import random
 from typing import Optional
+import sys
+import os
+
+# Add assets to path for avatar import
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'assets'))
 
 from game_systems.game_engine import (
     GameEngine, GameMode, Difficulty, TournamentManager
@@ -16,6 +21,7 @@ from game_systems.game_engine import (
 from opponents.necromancer_opponent import NecromancerOpponent
 from opponents.guardian_opponent import RoyalGuardianOpponent
 from opponents.chess_3d_opponent import Chess3DOpponent
+from avatar import RoyalAvatar, AvatarDisplay, MedicalSpecialty, create_player_avatar
 
 
 class AmalgamationGameUI:
@@ -27,11 +33,15 @@ class AmalgamationGameUI:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("AMALGAMATION - Prize-Winning Game")
-        self.root.geometry("1000x700")
+        self.root.geometry("1200x800")
         self.root.configure(bg='#1a1a2e')
         
+        # Player avatar initialization
+        self.player_avatar = create_player_avatar(name="Royal Healer Knight")
+        self.avatar_display = AvatarDisplay(self.player_avatar)
+        
         # Game engine initialization
-        self.game_engine = GameEngine(player_name="Champion")
+        self.game_engine = GameEngine(player_name=self.player_avatar.name)
         self.tournament_manager = TournamentManager(self.game_engine)
         
         # Register opponents
@@ -56,6 +66,103 @@ class AmalgamationGameUI:
         self.game_engine.register_opponent(guardian)
         self.game_engine.register_opponent(chess_ai)
     
+    def _create_avatar_tab(self) -> None:
+        """Avatar and medical system tab"""
+        frame = tk.Frame(self.notebook, bg='#1a1a2e')
+        self.notebook.add(frame, text="Avatar")
+        
+        # Avatar portrait display
+        self.avatar_text = tk.Text(
+            frame, bg='#16213e', fg='#0f3460',
+            font=("Courier", 10), relief=tk.FLAT
+        )
+        self.avatar_text.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        self._update_avatar_display()
+        self.avatar_text.config(state=tk.DISABLED)
+        
+        # Control buttons
+        control_frame = tk.Frame(frame, bg='#1a1a2e')
+        control_frame.pack(fill=tk.X, padx=10, pady=10)
+        
+        tk.Button(
+            control_frame, text="Cast Healing Spell",
+            bg='#16c784', fg='white', font=("Arial", 10, "bold"),
+            command=self._cast_healing_spell,
+            relief=tk.FLAT, padx=15, pady=8
+        ).pack(side=tk.LEFT, padx=5)
+        
+        tk.Button(
+            control_frame, text="Use Potion",
+            bg='#ffd700', fg='black', font=("Arial", 10, "bold"),
+            command=self._use_potion,
+            relief=tk.FLAT, padx=15, pady=8
+        ).pack(side=tk.LEFT, padx=5)
+        
+        tk.Button(
+            control_frame, text="Upgrade Medical Tier",
+            bg='#a78bfa', fg='white', font=("Arial", 10, "bold"),
+            command=self._upgrade_medical_tier,
+            relief=tk.FLAT, padx=15, pady=8
+        ).pack(side=tk.LEFT, padx=5)
+        
+        tk.Button(
+            control_frame, text="Refresh",
+            bg='#0f3460', fg='#16c784', font=("Arial", 10, "bold"),
+            command=self._update_avatar_display,
+            relief=tk.FLAT, padx=15, pady=8
+        ).pack(side=tk.LEFT, padx=5)
+    
+    def _update_avatar_display(self) -> None:
+        """Update avatar portrait display"""
+        self.avatar_text.config(state=tk.NORMAL)
+        self.avatar_text.delete(1.0, tk.END)
+        
+        portrait = self.avatar_display.render_avatar_portrait()
+        self.avatar_text.insert(1.0, portrait)
+        
+        self.avatar_text.config(state=tk.DISABLED)
+    
+    def _cast_healing_spell(self) -> None:
+        """Cast healing spell"""
+        abilities = list(self.player_avatar.active_specialty_abilities.keys())
+        
+        if not abilities:
+            messagebox.showwarning("Abilities", "No abilities available")
+            return
+        
+        # Use first ability for demo
+        ability_name = abilities[0]
+        result = self.player_avatar.cast_healing_spell(ability_name)
+        
+        if result['success']:
+            messagebox.showinfo("Healing Cast", result['message'])
+        else:
+            messagebox.showwarning("Cast Failed", result['message'])
+        
+        self._update_avatar_display()
+    
+    def _use_potion(self) -> None:
+        """Use healing potion"""
+        result = self.player_avatar.use_healing_potion()
+        
+        if result['success']:
+            messagebox.showinfo("Potion Used", result['message'])
+        else:
+            messagebox.showwarning("No Potions", result['message'])
+        
+        self._update_avatar_display()
+    
+    def _upgrade_medical_tier(self) -> None:
+        """Upgrade medical tier"""
+        if self.player_avatar.medical_tier.value >= 5:
+            messagebox.showinfo("Already Maxed", "Medical tier already at maximum!")
+            return
+        
+        self.player_avatar.upgrade_medical_specialty()
+        messagebox.showinfo("Upgrade!", f"Advanced to {self.player_avatar.medical_tier.name}!")
+        self._update_avatar_display()
+    
     def _create_main_layout(self) -> None:
         """Create main window layout"""
         
@@ -78,6 +185,7 @@ class AmalgamationGameUI:
         self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         # Create tabs
+        self._create_avatar_tab()
         self._create_tournament_tab()
         self._create_opponent_selection_tab()
         self._create_gameplay_tab()
