@@ -12,7 +12,7 @@ from enum import Enum
 import random
 import time
 
-from game_engine import OpponentAI, GameState, Difficulty
+from game_systems.game_engine import OpponentAI, GameState, Difficulty
 
 
 class NecromancerStrategy(Enum):
