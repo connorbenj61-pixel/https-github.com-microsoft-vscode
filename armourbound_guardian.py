@@ -1,5 +1,9 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Dict, Any
+
+
+# Global AI registry for inter-agent communication
+_ai_registry: Dict[str, ArmourboundGuardianAI] = {}
 
 
 class ArmourboundGuardianAI:
@@ -120,3 +124,103 @@ class ArmourboundGuardianAI:
                 "Share discoveries: collaborate, publish, teach others.",
                 "Reflect and integrate: understand how this domain connects to broader knowledge.",
             ]
+
+    def register_as(self, agent_name: str) -> None:
+        """
+        Register this AI agent in the global registry for inter-agent communication.
+        This allows other AIs to discover and communicate with this agent.
+        """
+        global _ai_registry
+        _ai_registry[agent_name] = self
+        self.agent_name = agent_name
+
+    def send_message(self, recipient_name: str, message: str, context: Dict[str, Any] | None = None) -> Dict[str, Any]:
+        """
+        Send a message to another registered AI agent and get a response.
+        
+        Args:
+            recipient_name: Name of the recipient AI agent
+            message: Message content to send
+            context: Optional context dictionary for the message
+            
+        Returns:
+            Dictionary containing response_text, sender, recipient, timestamp info
+        """
+        global _ai_registry
+        
+        if recipient_name not in _ai_registry:
+            return {
+                "success": False,
+                "response_text": f"No agent named '{recipient_name}' is currently registered.",
+                "sender": getattr(self, "agent_name", "Unknown"),
+                "recipient": recipient_name,
+                "error": "Agent not found"
+            }
+        
+        recipient_ai = _ai_registry[recipient_name]
+        response = recipient_ai.receive_message(
+            sender_name=getattr(self, "agent_name", "Unknown"),
+            message=message,
+            context=context
+        )
+        
+        return {
+            "success": True,
+            "response_text": response,
+            "sender": getattr(self, "agent_name", "Unknown"),
+            "recipient": recipient_name
+        }
+
+    def receive_message(self, sender_name: str, message: str, context: Dict[str, Any] | None = None) -> str:
+        """
+        Receive and process a message from another AI agent.
+        Routes the message to appropriate handler based on content.
+        
+        Args:
+            sender_name: Name of the sending AI agent
+            message: Message content received
+            context: Optional context from the sender
+            
+        Returns:
+            String response to send back to the sender
+        """
+        msg_lower = message.lower()
+        
+        # Route based on message intent
+        if "plan" in msg_lower and "moon" in msg_lower:
+            steps = self.plan_moon_mission()
+            return f"I have generated a {len(steps)}-step moon mission plan. Beginning with: {steps[0]}"
+        
+        elif "learn" in msg_lower or "domain" in msg_lower:
+            # Extract domain name if mentioned
+            for keyword in ["dolphins", "runes", "quantum"]:
+                if keyword in msg_lower:
+                    steps = self.learn_domain_language(keyword)
+                    return f"Learning path for {keyword}: {len(steps)} foundational steps identified. Starting with: {steps[0]}"
+            return "I can help you learn various domains. Specify: dolphins, runes, quantum_mechanics, or moon."
+        
+        elif "reasoning" in msg_lower or "reason" in msg_lower:
+            # Extract phase if mentioned
+            for phase in ["objectives", "vehicle", "trajectory", "systems", "risk", "execute"]:
+                if phase in msg_lower:
+                    reasoning = self.reason_step_toward_moon({"phase": phase})
+                    return f"Reasoning for {phase} phase: {reasoning}"
+            return "Ready to provide reasoning. Specify a phase: objectives, vehicle, trajectory, systems, risk, or execute."
+        
+        elif "status" in msg_lower or "hello" in msg_lower or "greetings" in msg_lower:
+            return f"Greetings, {sender_name}. I am the Council Protector's Armourbound Guardian AI. How may I assist you?"
+        
+        else:
+            return f"Message received from {sender_name}: '{message[:50]}...'. Please query me about moon missions, domain learning, or tactical reasoning."
+
+    @staticmethod
+    def list_registered_agents() -> List[str]:
+        """Return names of all currently registered AI agents."""
+        global _ai_registry
+        return list(_ai_registry.keys())
+
+    @staticmethod
+    def get_agent(agent_name: str) -> ArmourboundGuardianAI | None:
+        """Retrieve a registered AI agent by name."""
+        global _ai_registry
+        return _ai_registry.get(agent_name)
