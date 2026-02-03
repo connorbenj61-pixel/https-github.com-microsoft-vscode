@@ -40,6 +40,17 @@ Welcome to the complete SigNet.α publication package. All documentation is orga
   - Performance benchmarks
   - *Reference this for implementation details*
 
+### 🚀 AI & Planning Systems
+- **[ARMOURBOUND_GUARDIAN_README.md](ARMOURBOUND_GUARDIAN_README.md)**
+  - Moon mission planner (24-step architecture)
+  - Phase-based strategic reasoning
+  - Spacecraft design framework
+  - Systems engineering checklist
+  - Educational reference material
+  - Integration with game opponent system
+  - Unit test coverage & examples
+  - *Reference for lunar mission planning & AI design*
+
 ### ✅ Quality Assurance
 - **[PUBLICATION_CHECKLIST.md](PUBLICATION_CHECKLIST.md)**
   - Pre-publication review completed

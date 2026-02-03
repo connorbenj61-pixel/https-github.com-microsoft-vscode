@@ -35,3 +35,24 @@ class ArmourboundGuardianAI:
             "Post-mission activities: data analysis, hardware refurbishment, lessons learned, and archival.",
         ]
         return steps
+
+    def reason_step_toward_moon(self, context: dict | None = None) -> str:
+        """
+        Given a partial context, narrate the next logical concern.
+        """
+        phase = context.get("phase") if context else "objectives"
+
+        if phase == "objectives":
+            return "First, clarify: is this a crewed mission, what duration, and is a safe return required?"
+        if phase == "vehicle":
+            return "Next, match mission mass and delta-v needs to an existing or hypothetical launch vehicle."
+        if phase == "trajectory":
+            return "Now, compute or approximate a translunar trajectory and required burns from low Earth orbit."
+        if phase == "systems":
+            return "Ensure spacecraft systems—life support, power, comms, GNC—are sized and redundantly designed."
+        if phase == "risk":
+            return "Identify critical failure modes and define abort options at each mission phase."
+        if phase == "execute":
+            return "With design and sims complete, the focus shifts to launch ops, monitoring, and mid-course corrections."
+
+        return "The Council Protector notes: without clearer phase context, the next step is to refine mission constraints."
