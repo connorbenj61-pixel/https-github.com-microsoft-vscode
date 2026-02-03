@@ -45,6 +45,61 @@ class TestArmourboundIntegration(unittest.TestCase):
             self.assertIsInstance(reason, str)
             self.assertGreater(len(reason), 10)
 
+    def test_learn_domain_language_dolphins(self):
+        from armourbound_guardian import ArmourboundGuardianAI
+
+        ai = ArmourboundGuardianAI()
+        
+        # Test dolphin language learning plan
+        dolphin_plan = ai.learn_domain_language("dolphins")
+        self.assertIsInstance(dolphin_plan, list)
+        self.assertGreaterEqual(len(dolphin_plan), 10)
+        self.assertTrue(any("bioacoustics" in step.lower() for step in dolphin_plan))
+        self.assertTrue(any("dolphin" in step.lower() for step in dolphin_plan))
+
+    def test_learn_domain_language_moon(self):
+        from armourbound_guardian import ArmourboundGuardianAI
+
+        ai = ArmourboundGuardianAI()
+        
+        # Test that 'moon' domain returns the moon mission plan
+        moon_plan = ai.learn_domain_language("moon")
+        mission_plan = ai.plan_moon_mission()
+        self.assertEqual(moon_plan, mission_plan)
+
+    def test_learn_domain_language_ancient_runes(self):
+        from armourbound_guardian import ArmourboundGuardianAI
+
+        ai = ArmourboundGuardianAI()
+        
+        # Test ancient runes learning plan
+        runes_plan = ai.learn_domain_language("ancient_runes")
+        self.assertIsInstance(runes_plan, list)
+        self.assertGreaterEqual(len(runes_plan), 10)
+        self.assertTrue(any("futhark" in step.lower() for step in runes_plan))
+
+    def test_learn_domain_language_quantum_mechanics(self):
+        from armourbound_guardian import ArmourboundGuardianAI
+
+        ai = ArmourboundGuardianAI()
+        
+        # Test quantum mechanics learning plan
+        quantum_plan = ai.learn_domain_language("quantum_mechanics")
+        self.assertIsInstance(quantum_plan, list)
+        self.assertGreaterEqual(len(quantum_plan), 10)
+        self.assertTrue(any("schrödinger" in step.lower() for step in quantum_plan))
+
+    def test_learn_domain_language_fallback(self):
+        from armourbound_guardian import ArmourboundGuardianAI
+
+        ai = ArmourboundGuardianAI()
+        
+        # Test generic fallback for unknown domain
+        unknown_plan = ai.learn_domain_language("cryptozoology")
+        self.assertIsInstance(unknown_plan, list)
+        self.assertGreaterEqual(len(unknown_plan), 10)
+        self.assertTrue(any("Council Protector" in step for step in unknown_plan))
+
 
 if __name__ == '__main__':
     unittest.main()
