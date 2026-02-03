@@ -29,14 +29,14 @@ class TestArmourboundIntegration(unittest.TestCase):
 
         ai = ArmourboundGuardianAI()
 
-        # Test default (no context) — returns objectives phase
+        # Test default (no context) — returns objectives phase with kid-friendly language
         reason = ai.reason_step_toward_moon()
         self.assertIsInstance(reason, str)
-        self.assertIn("crewed mission", reason)
+        self.assertIn("trip", reason.lower())  # "Is this a trip with friends..."
 
         # Test fallback case (unknown phase)
         reason = ai.reason_step_toward_moon({"phase": "unknown"})
-        self.assertIn("Council Protector", reason)
+        self.assertIn("Guardian", reason)
 
         # Test each phase
         phases = ["objectives", "vehicle", "trajectory", "systems", "risk", "execute"]
@@ -54,8 +54,8 @@ class TestArmourboundIntegration(unittest.TestCase):
         dolphin_plan = ai.learn_domain_language("dolphins")
         self.assertIsInstance(dolphin_plan, list)
         self.assertGreaterEqual(len(dolphin_plan), 10)
-        self.assertTrue(any("bioacoustics" in step.lower() for step in dolphin_plan))
         self.assertTrue(any("dolphin" in step.lower() for step in dolphin_plan))
+        self.assertTrue(any("sounds" in step.lower() or "talk" in step.lower() for step in dolphin_plan))
 
     def test_learn_domain_language_moon(self):
         from armourbound_guardian import ArmourboundGuardianAI
@@ -94,11 +94,11 @@ class TestArmourboundIntegration(unittest.TestCase):
 
         ai = ArmourboundGuardianAI()
         
-        # Test generic fallback for unknown domain
+        # Test generic fallback for unknown domain with kid-friendly language
         unknown_plan = ai.learn_domain_language("cryptozoology")
         self.assertIsInstance(unknown_plan, list)
         self.assertGreaterEqual(len(unknown_plan), 10)
-        self.assertTrue(any("Council Protector" in step for step in unknown_plan))
+        self.assertTrue(any("explore" in step.lower() for step in unknown_plan))
 
     def test_ai_registration_and_discovery(self):
         from armourbound_guardian import ArmourboundGuardianAI

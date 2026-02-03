@@ -2,6 +2,9 @@ from __future__ import annotations
 from typing import List, Dict, Any
 
 
+# PEGI 3 - Suitable for ages 3 and up
+# All content is child-safe, educational, and non-violent
+
 # Global AI registry for inter-agent communication
 _ai_registry: Dict[str, ArmourboundGuardianAI] = {}
 
@@ -11,6 +14,7 @@ class ArmourboundGuardianAI:
         """
         High-level reasoning steps for 'how to get to the Moon'.
         This is a conceptual planner, not a control system.
+        PEGI 3: Educational space exploration content, suitable for all ages.
         """
         steps = [
             "Define mission objectives: crewed or uncrewed, scientific and commercial goals, duration, and return requirements.",
@@ -40,26 +44,63 @@ class ArmourboundGuardianAI:
         ]
         return steps
 
+    def plan_treasure_hunt_adventure(self) -> List[str]:
+        """
+        Kid-friendly adventure: Planning a fun treasure hunt!
+        PEGI 3: Exciting, safe adventure for young explorers.
+        """
+        return [
+            "Come up with a fun treasure hunt adventure! What will kids search for?",
+            "Pick a safe place to hide treasures: backyard, park, playground, or indoor space.",
+            "Decide what treasures to hide: toys, stickers, candy, coins, or fun surprises!",
+            "Make a treasure map with fun drawings and clues to help kids find the treasures.",
+            "Create fun riddle clues: 'Look where birds like to sing!' or 'Find me under something soft!'",
+            "Make the adventure exciting by hiding treasures in different places around the area.",
+            "Plan fun activities or games along the adventure path that kids will enjoy.",
+            "Make sure all the treasures are safe, clean, and fun for all the kids to enjoy.",
+            "Get adult helpers ready to watch over the adventure and help kids if they need it.",
+            "Start the adventure and watch kids have super fun finding treasures and solving clues!",
+        ]
+
+    def plan_baking_adventure(self) -> List[str]:
+        """
+        Delicious adventure: Planning to bake cookies!
+        PEGI 3: Fun, creative baking for kids of all ages.
+        """
+        return [
+            "Pick a yummy recipe: chocolate chip cookies, sugar cookies, or fruity biscuits sound good!",
+            "Get all the yummy ingredients ready: flour, eggs, butter, sugar, chocolate chips, and more.",
+            "Ask a grown-up to help you because baking is more fun with teamwork!",
+            "Mix the ingredients together and watch the dough come together—it's like magic!",
+            "Let kids take turns stirring, mixing, and making fun shapes with the cookie dough.",
+            "Put your creations on the baking tray and watch the oven work its delicious magic.",
+            "Smell the wonderful cookie smell coming from the oven—yum yum!",
+            "Let the cookies cool down a little before tasting them (they're hot and exciting!)",
+            "Decorate your cookies with yummy toppings like frosting, sprinkles, or fruity bits.",
+            "Share your delicious baked creations with friends and family—baking brings people together!",
+        ]
+
     def reason_step_toward_moon(self, context: dict | None = None) -> str:
         """
         Given a partial context, narrate the next logical concern.
+        PEGI 3: Encouraging, positive guidance suitable for all ages.
         """
         phase = context.get("phase") if context else "objectives"
 
         if phase == "objectives":
-            return "First, clarify: is this a crewed mission, what duration, and is a safe return required?"
+            return "First, think about: Is this a trip with friends or just you? How long will it be? Will you need to come back home?"
         if phase == "vehicle":
-            return "Next, match mission mass and delta-v needs to an existing or hypothetical launch vehicle."
+            return "Next, pick the right rocket or spaceship! What size is our adventure?"
         if phase == "trajectory":
-            return "Now, compute or approximate a translunar trajectory and required burns from low Earth orbit."
+            return "Now, let's figure out the path through space! How do we get there safely?"
         if phase == "systems":
-            return "Ensure spacecraft systems—life support, power, comms, GNC—are sized and redundantly designed."
+            return "Make sure the spaceship is safe and comfy! Good air, power, and friendship are important."
         if phase == "risk":
-            return "Identify critical failure modes and define abort options at each mission phase."
+            return "Think about possible problems and have a plan if something tricky happens. That's smart planning!"
         if phase == "execute":
-            return "With design and sims complete, the focus shifts to launch ops, monitoring, and mid-course corrections."
+            return "Time for the exciting launch! We watch everything carefully and help each other stay safe."
 
-        return "The Council Protector notes: without clearer phase context, the next step is to refine mission constraints."
+        return "Guardian says: Let's break this adventure into easier pieces and think about what comes next!"
 
     def learn_domain_language(self, domain: str | None = None) -> List[str]:
         """
@@ -72,31 +113,70 @@ class ArmourboundGuardianAI:
         # Domain-specific learning paths
         if domain == "dolphins":
             return [
-                "Study marine mammal bioacoustics: frequency ranges (20 Hz to 150 kHz), click sequences, whistles.",
-                "Analyze dolphin communication patterns: echolocation clicks, signature whistles, burst-pulsed calls.",
-                "Research cetacean cognition: self-awareness, social bonds, problem-solving behaviors.",
-                "Examine known dolphin 'dialects': regional variations, cultural transmission across populations.",
-                "Conduct passive acoustic monitoring: underwater recording arrays, noise floor characterization.",
-                "Develop spectrogram analysis tools: visualization of frequency content over time.",
-                "Learn machine learning on cetacean vocalizations: clustering, pattern recognition, classification.",
-                "Study ethical considerations: non-invasive observation, marine sanctuary regulations, animal welfare.",
-                "Attempt decoding: map call types to behavioral contexts (feeding, mating, bonding, distress).",
-                "Collaborate with marine biologists: validation, field studies, longitudinal observation protocols.",
+                "Learn about dolphin sounds: clicks, whistles, and funny squeaky noises they make!",
+                "Discover how dolphins talk to their friends under the water with their special language.",
+                "Find out about dolphin families: moms, dads, and baby dolphins (calves) playing together.",
+                "Learn how dolphins use their special clicking sounds to find fish to eat.",
+                "Discover that dolphins are super smart and can remember their friends for many years.",
+                "Learn about different dolphin groups around the world and their unique sounds.",
+                "Find out how scientists listen to dolphins from boats and underwater to understand them.",
+                "Discover why it's important to protect dolphins and keep our oceans clean and safe.",
+                "Learn fun facts about what dolphins eat and where they like to swim and play.",
+                "Find out how you can help dolphins by learning more and telling your friends!",
             ]
         elif domain == "moon":
             return self.plan_moon_mission()
+        elif domain == "storybooks":
+            return [
+                "Explore wonderful fairy tales: Cinderella, Snow White, Sleeping Beauty, and many more!",
+                "Learn about classic heroes and princesses: their adventures, dreams, and magical journeys.",
+                "Discover brave knights, magical forests, and enchanted castles in adventure stories.",
+                "Learn about talking animals in stories: clever foxes, kind bears, and friendly forest creatures.",
+                "Find stories about friendship, helping others, and being kind to everyone you meet.",
+                "Discover magical spells, flying carpets, and wonderful things that happen in storybooks.",
+                "Learn about treasure hunts and exciting adventures in faraway lands and magical kingdoms.",
+                "Find stories that teach lessons about being brave, honest, and doing the right thing.",
+                "Discover how to make up your own stories and imagine your own magical adventures.",
+                "Learn that stories can take you anywhere and anything is possible with imagination!",
+            ]
+        elif domain == "dinosaurs":
+            return [
+                "Learn about T-Rex, the biggest meat-eating dinosaur that ever lived—so cool!",
+                "Discover Triceratops with three amazing horns and how they were very strong and tough.",
+                "Find out about long-necked Brachiosaurus, the tallest dinosaur that ate leaves from tall trees.",
+                "Learn about speedy Velociraptor and how they were quick and clever hunters.",
+                "Discover tiny dinosaurs, huge dinosaurs, flying dinosaurs, and swimming dinosaurs!",
+                "Learn why dinosaurs went away long, long ago and what we know from fossils they left behind.",
+                "Find out how dinosaurs lived together: what they ate, how they moved, and where they lived.",
+                "Discover fun dinosaur games: fossil hunting, dinosaur art, and pretend dinosaur adventures.",
+                "Learn that dinosaurs are super interesting and scientists are still discovering new things!",
+                "Find out how dinosaur stories help us imagine what Earth was like millions of years ago.",
+            ]
+        elif domain == "space_adventure":
+            return [
+                "Blast off to space and learn about planets: Mercury, Venus, Earth, Mars, and many more!",
+                "Discover the Sun that gives us light and warmth, and the Moon that lights up the night.",
+                "Learn about twinkling stars and constellations: groups of stars that make pictures in the sky.",
+                "Find out about astronauts who travel to space and float around in zero gravity—so amazing!",
+                "Discover rockets and spaceships that take people to explore space and the Moon.",
+                "Learn about galaxies: huge groups of stars and planets far, far away in space.",
+                "Find out about meteors and comets: icy space visitors that sometimes visit our sky.",
+                "Discover space stations where astronauts live and work in space, orbiting Earth.",
+                "Learn cool facts about black holes, nebulas, and other mysterious space wonders.",
+                "Find out how YOU can become an astronaut and help explore space when you grow up!",
+            ]
         elif domain == "ancient_runes":
             return [
-                "Examine historical texts: runic alphabets (Elder Futhark, Younger Futhark, Anglo-Saxon).",
-                "Study inscription sites: stone carvings, metalwork, artifacts from archaeological digs.",
-                "Analyze linguistic roots: Proto-Germanic and Old Norse etymologies.",
-                "Catalog known rune meanings: magical associations, phonetic values, symbolic interpretations.",
-                "Compare scripts: similarities to Latin, Greek, and other contemporary writing systems.",
-                "Research historical context: cultural, religious, and political significance.",
-                "Decode fragmentary inscriptions: apply statistical analysis and pattern matching.",
-                "Collaborate with runologists: scholarly review, consensus on interpretations.",
-                "Publish findings: academic papers, open databases, educational resources.",
-                "Explore modern revitalization: how runes are studied and celebrated today.",
+                "Learn about old alphabets: runes are like magical letters from long, long ago.",
+                "Discover how ancient people used runes to write messages and tell their stories.",
+                "Find out what each rune looks like and what sounds and meanings they represent.",
+                "Learn about Viking warriors and how runes were important to them and their culture.",
+                "Discover that runes can be found on old stones, rings, and artifacts in museums.",
+                "Learn how people long ago used runes like a special code to send secret messages.",
+                "Find out about different runic alphabets: Futhark, Elder, Younger, and Anglo-Saxon.",
+                "Discover how artists today still use rune symbols to decorate and create beautiful art.",
+                "Learn that studying runes helps us understand how people lived and thought long ago.",
+                "Find out how you can learn to write and draw runes yourself in a fun, creative way!",
             ]
         elif domain == "quantum_mechanics":
             return [
@@ -113,16 +193,16 @@ class ArmourboundGuardianAI:
             ]
         else:
             return [
-                f"The Council Protector regards the domain of '{domain}' with curiosity.",
-                "Define the domain's core principles, vocabulary, and fundamental concepts.",
-                "Gather authoritative sources: texts, practitioners, historical records.",
-                "Identify key patterns and recurring structures within the domain.",
-                "Build models: mental frameworks, mathematical representations, decision trees.",
-                "Practice and experiment: apply knowledge, test hypotheses, iterate.",
-                "Seek feedback from domain experts: validation, correction, refinement.",
-                "Document learning: create guides, summaries, teaching aids.",
-                "Share discoveries: collaborate, publish, teach others.",
-                "Reflect and integrate: understand how this domain connects to broader knowledge.",
+                f"Let's explore '{domain}' together! It's exciting to learn new things.",
+                "Define the key ideas and what makes this topic special and interesting.",
+                "Find awesome books, videos, websites, and experts who know about this.",
+                "Look for patterns and cool things that happen over and over.",
+                "Make pictures in your mind: how does this work? Draw pictures to show your ideas!",
+                "Try it out: do experiments, ask questions, discover new things yourself.",
+                "Ask smart people questions: get help and learn from people who know lots.",
+                "Write down what you learn: make notes, draw pictures, make it your own!",
+                "Tell your friends what you discovered: sharing makes learning more fun.",
+                "Think about how this connects to other things you know and love.",
             ]
 
     def register_as(self, agent_name: str) -> None:
