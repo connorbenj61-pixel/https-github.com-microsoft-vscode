@@ -7,6 +7,10 @@ from quantum_3d_visualizer import (
 from laser_printer_interface import (
     LaserPrinterController, LaserPrinterType, LaserConfig, LaserPrintJob
 )
+from vault_and_blackbox import (
+    LockedVault, BlackBox, AccessLevel, EventSeverity,
+    create_vault_and_blackbox, secure_operation
+)
 
 
 # PEGI 3 - Suitable for ages 3 and up
@@ -19,6 +23,21 @@ _ai_registry: Dict[str, ArmourboundGuardianAI] = {}
 
 
 class ArmourboundGuardianAI:
+    def __init__(self, vault_password: str = "guardian_default_password"):
+        """Initialize Guardian AI with vault and black box systems."""
+        self.vault, self.blackbox = create_vault_and_blackbox(vault_password)
+        self._vault_password = vault_password
+        self._operation_count = 0
+        
+        # Log initialization
+        self.blackbox.log_event(
+            event_type="initialization",
+            message="ArmourboundGuardianAI initialized",
+            actor="Guardian",
+            action="initialize",
+            severity=EventSeverity.INFO
+        )
+    
     def plan_moon_mission(self) -> List[str]:
         """
         High-level reasoning steps for 'how to get to the Moon'.
@@ -866,6 +885,275 @@ class ArmourboundGuardianAI:
             }
         else:
             return {"error": "GCode export failed"}
+
+    # ========== LOCKED VAULT METHODS ==========
+    
+    def vault_store_secret(self, key: str, value: Any, access_level: str = "internal",
+                          ttl_seconds: Optional[int] = None, tags: Optional[List[str]] = None) -> bool:
+        """
+        Store a secret in the locked vault.
+        
+        Args:
+            key: Unique identifier for the secret
+            value: Secret data to store
+            access_level: Security level ("public", "internal", "confidential", "restricted")
+            ttl_seconds: Time-to-live in seconds (None = no expiration)
+            tags: Tags for organizing secrets
+            
+        Returns:
+            True if stored successfully
+        """
+        level_map = {
+            "public": AccessLevel.PUBLIC,
+            "internal": AccessLevel.INTERNAL,
+            "confidential": AccessLevel.CONFIDENTIAL,
+            "restricted": AccessLevel.RESTRICTED
+        }
+        
+        access = level_map.get(access_level.lower(), AccessLevel.INTERNAL)
+        
+        success = self.vault.store_secret(
+            password=self._vault_password,
+            key=key,
+            value=value,
+            access_level=access,
+            ttl_seconds=ttl_seconds,
+            tags=tags
+        )
+        
+        # Log to black box
+        self.blackbox.log_event(
+            event_type="vault_operation",
+            message=f"Secret stored: {key}",
+            actor="Guardian",
+            action="vault_store",
+            severity=EventSeverity.INFO,
+            data={"key": key, "access_level": access.value, "tags": tags or []},
+            result="success" if success else "failure"
+        )
+        
+        self._operation_count += 1
+        return success
+    
+    def vault_retrieve_secret(self, key: str) -> Optional[Any]:
+        """
+        Retrieve a secret from the locked vault.
+        
+        Args:
+            key: Key of the secret to retrieve
+            
+        Returns:
+            The secret value if found, None otherwise
+        """
+        secret = self.vault.retrieve_secret(self._vault_password, key)
+        
+        # Log to black box
+        self.blackbox.log_event(
+            event_type="vault_operation",
+            message=f"Secret retrieved: {key}",
+            actor="Guardian",
+            action="vault_retrieve",
+            severity=EventSeverity.INFO,
+            data={"key": key},
+            result="success" if secret is not None else "failure"
+        )
+        
+        self._operation_count += 1
+        return secret
+    
+    def vault_delete_secret(self, key: str) -> bool:
+        """
+        Delete a secret from the locked vault.
+        
+        Args:
+            key: Key of the secret to delete
+            
+        Returns:
+            True if deleted successfully
+        """
+        success = self.vault.delete_secret(self._vault_password, key)
+        
+        # Log to black box
+        self.blackbox.log_event(
+            event_type="vault_operation",
+            message=f"Secret deleted: {key}",
+            actor="Guardian",
+            action="vault_delete",
+            severity=EventSeverity.WARNING,
+            data={"key": key},
+            result="success" if success else "failure"
+        )
+        
+        self._operation_count += 1
+        return success
+    
+    def vault_list_secrets(self, access_level: Optional[str] = None) -> List[str]:
+        """
+        List all secret keys in the vault.
+        
+        Args:
+            access_level: Filter by access level (optional)
+            
+        Returns:
+            List of secret keys
+        """
+        level_map = {
+            "public": AccessLevel.PUBLIC,
+            "internal": AccessLevel.INTERNAL,
+            "confidential": AccessLevel.CONFIDENTIAL,
+            "restricted": AccessLevel.RESTRICTED
+        }
+        
+        access = level_map.get(access_level.lower()) if access_level else None
+        
+        keys = self.vault.list_secrets(self._vault_password, access)
+        
+        # Log to black box
+        self.blackbox.log_event(
+            event_type="vault_operation",
+            message=f"Secrets listed: {len(keys)} keys",
+            actor="Guardian",
+            action="vault_list",
+            severity=EventSeverity.DEBUG,
+            data={"count": len(keys), "filter": access_level},
+            result="success"
+        )
+        
+        return keys
+    
+    def vault_search_by_tags(self, tags: List[str]) -> List[str]:
+        """
+        Search for secrets by tags.
+        
+        Args:
+            tags: List of tags to search for
+            
+        Returns:
+            List of matching secret keys
+        """
+        keys = self.vault.search_secrets(self._vault_password, tags)
+        
+        # Log to black box
+        self.blackbox.log_event(
+            event_type="vault_operation",
+            message=f"Secrets searched by tags: found {len(keys)}",
+            actor="Guardian",
+            action="vault_search",
+            severity=EventSeverity.DEBUG,
+            data={"tags": tags, "results": len(keys)},
+            result="success"
+        )
+        
+        return keys
+    
+    def vault_get_statistics(self) -> Optional[Dict[str, Any]]:
+        """Get vault statistics and status."""
+        stats = self.vault.get_vault_stats(self._vault_password)
+        
+        if stats:
+            self.blackbox.log_event(
+                event_type="vault_operation",
+                message="Vault statistics retrieved",
+                actor="Guardian",
+                action="vault_stats",
+                severity=EventSeverity.DEBUG,
+                data=stats,
+                result="success"
+            )
+        
+        return stats
+    
+    # ========== BLACK BOX METHODS ==========
+    
+    def blackbox_log_event(self, event_type: str, message: str, action: str,
+                          severity: str = "info", data: Optional[Dict] = None) -> str:
+        """
+        Log an event in the black box.
+        
+        Args:
+            event_type: Type of event
+            message: Human-readable message
+            action: What action was performed
+            severity: Severity level ("critical", "warning", "info", "debug")
+            data: Additional event data
+            
+        Returns:
+            Event ID for tracking
+        """
+        severity_map = {
+            "critical": EventSeverity.CRITICAL,
+            "warning": EventSeverity.WARNING,
+            "info": EventSeverity.INFO,
+            "debug": EventSeverity.DEBUG
+        }
+        
+        sev = severity_map.get(severity.lower(), EventSeverity.INFO)
+        
+        event_id = self.blackbox.log_event(
+            event_type=event_type,
+            message=message,
+            actor="Guardian",
+            action=action,
+            severity=sev,
+            data=data or {}
+        )
+        
+        self._operation_count += 1
+        return event_id
+    
+    def blackbox_query_events(self, event_type: Optional[str] = None,
+                             actor: Optional[str] = None,
+                             severity: Optional[str] = None,
+                             limit: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Query events from the black box.
+        
+        Args:
+            event_type: Filter by event type
+            actor: Filter by actor
+            severity: Filter by severity
+            limit: Maximum number of results
+            
+        Returns:
+            List of matching events
+        """
+        severity_map = {
+            "critical": EventSeverity.CRITICAL,
+            "warning": EventSeverity.WARNING,
+            "info": EventSeverity.INFO,
+            "debug": EventSeverity.DEBUG
+        }
+        
+        sev = severity_map.get(severity.lower()) if severity else None
+        
+        events = self.blackbox.query_events(
+            event_type=event_type,
+            actor=actor,
+            severity=sev,
+            limit=limit
+        )
+        
+        return [e.to_dict() for e in events]
+    
+    def blackbox_get_statistics(self) -> Dict[str, Any]:
+        """Get black box statistics and analysis."""
+        return self.blackbox.get_statistics()
+    
+    def blackbox_export_log(self, format: str = "json") -> str:
+        """
+        Export black box log in specified format.
+        
+        Args:
+            format: Export format ("json", "csv", "text")
+            
+        Returns:
+            Exported log as string
+        """
+        return self.blackbox.export_events(format)
+    
+    def blackbox_get_operation_count(self) -> int:
+        """Get total number of operations performed by Guardian."""
+        return self._operation_count
 
 
 # Import quantum components after class definition to avoid circular imports
