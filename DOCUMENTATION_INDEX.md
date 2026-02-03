@@ -48,6 +48,18 @@ Welcome to the complete SigNet.α publication package. All documentation is orga
   - Systems engineering checklist
   - Educational reference material
   - Integration with game opponent system
+
+- **[QUANTUM_COMPUTING_README.md](QUANTUM_COMPUTING_README.md)**
+  - Comprehensive quantum computing system (inspired by Google Willow)
+  - Quantum gates and superposition demonstrations
+  - Deutsch's and Grover's quantum algorithms
+  - Quantum error correction (3-qubit repetition code)
+  - Quantum advantage analysis across domains
+  - Three-level learning curriculum (beginner to advanced)
+  - Integration with ArmourboundGuardianAI
+  - 39 passing quantum computing tests
+  - Educational quantum computing for ages 10+
+  - *See this for advanced quantum concepts and demonstrations*
   - Unit test coverage & examples
   - *Reference for lunar mission planning & AI design*
 
@@ -73,8 +85,11 @@ Welcome to the complete SigNet.α publication package. All documentation is orga
 | PUBLICATION_SUMMARY.md | 266 | Project overview & next steps |
 | FEATURES.md | 434 | Technical deep-dive |
 | PUBLICATION_CHECKLIST.md | 180 | Quality assurance verification |
+| ARMOURBOUND_GUARDIAN_README.md | 520 | AI planning system guide |
+| QUANTUM_COMPUTING_README.md | 580 | Quantum computing integration |
+| PEGI3_CONTENT_RATING.md | 250 | Child-safety certification |
 | README.md | 57 | Repository index |
-| **TOTAL** | **1,217** | **Comprehensive documentation** |
+| **TOTAL** | **2,557** | **Comprehensive documentation** |
 
 ---
 
