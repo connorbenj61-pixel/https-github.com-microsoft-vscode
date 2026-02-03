@@ -1,9 +1,11 @@
 from __future__ import annotations
 from typing import List, Dict, Any
+from quantum_computing_engine import QuantumSimulator, QuantumCircuit, QuantumGates
 
 
 # PEGI 3 - Suitable for ages 3 and up
 # All content is child-safe, educational, and non-violent
+# ADVANCED SECTION: Quantum Computing (Educational - suitable for ages 10+)
 
 # Global AI registry for inter-agent communication
 _ai_registry: Dict[str, ArmourboundGuardianAI] = {}
@@ -304,3 +306,195 @@ class ArmourboundGuardianAI:
         """Retrieve a registered AI agent by name."""
         global _ai_registry
         return _ai_registry.get(agent_name)
+    def run_quantum_circuit(self, circuit_type: str = "superposition") -> Dict[str, Any]:
+        """
+        ADVANCED: Run quantum computing circuits inspired by Google Willow.
+        This demonstrates quantum mechanics principles and quantum advantage.
+        
+        Args:
+            circuit_type: Type of quantum circuit to execute
+                - "superposition": Create and measure superposition states
+                - "entanglement": Create entangled Bell states
+                - "deutsch": Demonstrate Deutsch's quantum algorithm
+                - "grover": Run Grover's quantum search algorithm
+                - "full_benchmark": Run all quantum simulations
+        
+        Returns:
+            Dictionary with quantum computation results and interpretations
+        """
+        try:
+            if circuit_type == "superposition":
+                return QuantumSimulator.simulate_superposition_demo()
+            elif circuit_type == "entanglement":
+                return QuantumSimulator.simulate_entanglement_demo()
+            elif circuit_type == "deutsch":
+                return QuantumSimulator.simulate_deutsch_algorithm_demo()
+            elif circuit_type == "grover":
+                return QuantumSimulator.simulate_grover_search_demo()
+            elif circuit_type == "full_benchmark":
+                return QuantumSimulator.run_quantum_benchmarks()
+            else:
+                return {
+                    "error": f"Unknown circuit type: {circuit_type}",
+                    "available_types": ["superposition", "entanglement", "deutsch", "grover", "full_benchmark"]
+                }
+        except Exception as e:
+            return {"error": f"Quantum circuit execution failed: {str(e)}"}
+
+    def perform_quantum_phase_estimation(self, target_value: float) -> Dict[str, Any]:
+        """
+        ADVANCED: Quantum phase estimation - a key quantum algorithm.
+        Estimates the phase of an eigenvalue, fundamental to many quantum algorithms.
+        """
+        circuit = QuantumCircuit(3)
+        
+        # Prepare eigenstate (simplified)
+        circuit.apply_hadamard(0)
+        
+        # Apply controlled phase operations
+        for control in range(3):
+            angle = (2 * 3.14159 * target_value) / (2 ** control)
+            circuit.apply_phase(1, angle)
+        
+        results = circuit.measure_all()
+        phase_estimate = sum(b * (2 ** (2-i)) for i, b in enumerate(results[:3])) / 8.0
+        
+        return {
+            "algorithm": "Quantum Phase Estimation",
+            "target_value": target_value,
+            "qubit_measurements": results,
+            "estimated_phase": phase_estimate,
+            "application": "Used in Shor's algorithm for factoring, quantum chemistry simulations",
+        }
+
+    def quantum_error_correction_demo(self) -> Dict[str, Any]:
+        """
+        ADVANCED: Demonstrate quantum error correction using repetition codes.
+        Shows how quantum information can be protected from errors.
+        """
+        from quantum_computing_engine import QuantumErrorCorrection
+        
+        # Create a logical qubit
+        data_qubit = QuantumBit(1, 0)  # Start in |0⟩ state
+        data_qubit = QuantumGates.hadamard(data_qubit)  # Create superposition
+        
+        # Encode into 3-qubit repetition code
+        logical_qubits = QuantumErrorCorrection.create_logical_qubit(data_qubit)
+        
+        # Measure parity (syndrome extraction)
+        measurements = QuantumErrorCorrection.measure_parity(logical_qubits)
+        
+        # Determine error location
+        error_location = QuantumErrorCorrection.recover_from_single_error(measurements)
+        
+        return {
+            "algorithm": "3-Qubit Repetition Code",
+            "original_state": str(data_qubit),
+            "logical_encoding": f"Encoded into {len(logical_qubits)} physical qubits",
+            "syndrome_measurements": measurements,
+            "detected_error_qubit": error_location if error_location >= 0 else "No error",
+            "protection": "Can correct single-qubit errors through syndrome measurement",
+            "application": "Foundation for fault-tolerant quantum computing",
+        }
+
+    def quantum_advantage_analysis(self) -> Dict[str, Any]:
+        """
+        ADVANCED: Analyze where quantum computing provides computational advantage.
+        Compares quantum vs classical approaches for different problem types.
+        """
+        return {
+            "quantum_advantage_domains": {
+                "factoring": {
+                    "problem": "Find prime factors of large numbers",
+                    "classical_complexity": "O(exp(n^(1/3)))",  # General number field sieve
+                    "quantum_complexity": "O(n^3)",  # Shor's algorithm
+                    "speedup": "Exponential",
+                    "application": "Cryptography breaking, RSA security implications",
+                },
+                "database_search": {
+                    "problem": "Find item in unstructured database",
+                    "classical_complexity": "O(n)",
+                    "quantum_complexity": "O(√n)",  # Grover's algorithm
+                    "speedup": "Quadratic",
+                    "application": "Large database queries, machine learning",
+                },
+                "simulation": {
+                    "problem": "Simulate quantum systems (molecules, materials)",
+                    "classical_complexity": "O(exp(n))",
+                    "quantum_complexity": "O(poly(n))",
+                    "speedup": "Exponential",
+                    "application": "Drug discovery, material science, chemistry",
+                },
+                "optimization": {
+                    "problem": "Find optimal solution in search space",
+                    "classical_complexity": "O(2^n)",
+                    "quantum_complexity": "O(poly(n)) with heuristics",
+                    "speedup": "Significant (problem dependent)",
+                    "application": "Machine learning, logistics, finance",
+                },
+            },
+            "current_limitations": {
+                "decoherence": "Quantum states decay over time",
+                "error_rates": "Current systems have high error rates (~0.1-1%)",
+                "scalability": "Building large stable quantum computers is extremely difficult",
+                "algorithms": "Limited number of proven quantum algorithms",
+            },
+            "google_willow_inspiration": {
+                "breakthrough": "Google Willow quantum processor achieved below-threshold error rates",
+                "significance": "First experimental demonstration that quantum error correction can reduce errors below a threshold",
+                "implications": "Path toward fault-tolerant quantum computing and useful quantum advantage",
+                "your_system": "This Guardian AI incorporates educational quantum computing principles inspired by Willow's architectures",
+            }
+        }
+
+    def run_quantum_learning_path(self, level: str = "beginner") -> List[str]:
+        """
+        ADVANCED: Structured learning path for quantum computing mastery.
+        
+        Args:
+            level: "beginner", "intermediate", or "advanced"
+        """
+        learning_paths = {
+            "beginner": [
+                "Understanding qubits and superposition (basic quantum mechanics)",
+                "Learn single-qubit gates (Pauli X, Y, Z and Hadamard)",
+                "Study measurement and quantum collapse (observation effect)",
+                "Explore quantum circuits and circuit notation (Qasm syntax)",
+                "Understand probability amplitudes and normalization",
+                "Practice simple quantum state preparations (|0⟩, |1⟩, |+⟩, |-⟩)",
+                "Learn about quantum gates as unitary transformations",
+                "Study phase and relative phases in quantum states",
+                "Understand quantum superposition through experiments",
+                "Complete first quantum circuit design (Bell state preparation)",
+            ],
+            "intermediate": [
+                "Multi-qubit gates (CNOT, Controlled-Z, SWAP)",
+                "Quantum entanglement and Bell states (|Φ+⟩, |Φ-⟩, |Ψ+⟩, |Ψ-⟩)",
+                "Deutsch's algorithm (determining function properties)",
+                "Deutsch-Jozsa algorithm (generalization to multiple qubits)",
+                "Grover's search algorithm (quadratic speedup)",
+                "Quantum Fourier Transform (foundation for Shor's)",
+                "Phase estimation algorithms (eigenvalue finding)",
+                "Quantum interference and amplitude amplification",
+                "Circuit optimization and gate reduction",
+                "Understanding quantum computation complexity classes (BQP)",
+            ],
+            "advanced": [
+                "Shor's algorithm for integer factorization (cryptographic impact)",
+                "Quantum phase estimation full protocol",
+                "Variational Quantum Eigensolvers (VQE) for chemistry simulations",
+                "Quantum Approximate Optimization Algorithm (QAOA)",
+                "Quantum error correction and fault tolerance",
+                "Topological quantum computing and anyons",
+                "Adiabatic quantum computation and quantum annealing",
+                "Quantum machine learning algorithms (HHL, quantum SVM)",
+                "Quantum walk algorithms (quantum search generalizations)",
+                "Research frontiers: quantum error correction thresholds, scalable architectures",
+            ]
+        }
+        
+        return learning_paths.get(level, learning_paths["beginner"])
+
+
+# Import quantum components after class definition to avoid circular imports
+from quantum_computing_engine import QuantumBit, QuantumGates
