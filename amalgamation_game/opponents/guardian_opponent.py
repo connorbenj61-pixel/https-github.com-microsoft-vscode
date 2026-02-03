@@ -12,6 +12,7 @@ from enum import Enum
 import random
 
 from game_systems.game_engine import OpponentAI, GameState, Difficulty
+from armourbound_guardian import ArmourboundGuardianAI
 
 
 class GuardianFormation(Enum):
@@ -105,6 +106,16 @@ class RoyalGuardianOpponent(OpponentAI):
         self.current_formation = GuardianFormation.DIAMOND
         self.mission_count = 0
         self.squad_morale = 80  # 0-100
+        # Strategic planner (conceptual) — integrates external AI planner
+        self.strategic_planner = ArmourboundGuardianAI()
+
+    def get_strategic_plan(self) -> List[str]:
+        """Return a high-level strategic plan from the planner.
+
+        This is a conceptual integration used for flavor text or
+        high-level decision-making, not real-time control.
+        """
+        return self.strategic_planner.plan_moon_mission()
     
     def prepare_for_game(self, difficulty: Difficulty) -> None:
         """Prepare guardian squad for match"""
