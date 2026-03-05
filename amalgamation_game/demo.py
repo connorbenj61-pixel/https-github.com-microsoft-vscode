@@ -9,6 +9,8 @@ import tkinter as tk
 from tkinter import ttk
 import time
 import threading
+import requests
+import os
 from amalgamation_game.game_systems.game_engine import GameEngine, GameMode, Difficulty
 from amalgamation_game.opponents.necromancer_opponent import NecromancerOpponent
 from amalgamation_game.opponents.guardian_opponent import RoyalGuardianOpponent
@@ -40,6 +42,48 @@ def get_wifi_status():
 
 
 class AmalgamationDemoUI:
+                        # --- Blockchain License Purchase UI ---
+                        purchase_frame = tk.Frame(frame, bg='#16213e')
+                        purchase_frame.pack(fill=tk.X, pady=(10, 0))
+                        purchase_label = tk.Label(purchase_frame, text="Purchase License (Bitcoin):", font=("Arial", 10, "bold"), fg='#e94560', bg='#16213e')
+                        purchase_label.pack(side=tk.LEFT, padx=(10, 5))
+                        provider_var = tk.StringVar(value="Blockonomics")
+                        provider_menu = ttk.Combobox(purchase_frame, textvariable=provider_var, values=["Blockonomics", "BTCPay Server", "Direct Blockchain"], width=18, state="readonly")
+                        provider_menu.pack(side=tk.LEFT, padx=5)
+                        def request_payment():
+                            provider = provider_var.get()
+                            # Placeholder logic for payment address generation
+                            if provider == "Blockonomics":
+                                address = "1BlockonomicsExampleAddr..."
+                                amount = "0.0005 BTC"
+                                info = "(Blockonomics API integration required)"
+                            elif provider == "BTCPay Server":
+                                address = "bc1BTCPayExampleAddr..."
+                                amount = "0.0005 BTC"
+                                info = "(BTCPay Server API integration required)"
+                            else:
+                                address = "bc1DirectMonitorExample..."
+                                amount = "0.0005 BTC"
+                                info = "(Direct blockchain monitoring required)"
+                            content.config(state=tk.NORMAL)
+                            content.insert(tk.END, f"\n[License Purchase]\nProvider: {provider}\nSend {amount} to:\n{address}\n{info}\nAfter payment is confirmed, your license key will appear here.\n")
+                            content.config(state=tk.DISABLED)
+                            # In a real implementation, start polling the provider/blockchain for payment confirmation
+                            # On confirmation, generate and display a license key
+                        purchase_btn = tk.Button(purchase_frame, text="Purchase License", command=request_payment, bg='#e94560', fg='#fff', font=("Arial", 10, "bold"), padx=10, pady=2)
+                        purchase_btn.pack(side=tk.LEFT, padx=5)
+                        # --- End Blockchain License Purchase UI ---
+                "=============================================================\n\n"
+                "AI COMEDY DEMONSTRATION\n"
+                "=============================================================\n\n"
+                "The AI Queen is also a master of wit and humor!\n\n"
+                "Sample AI Queen Jokes:\n"
+                "  'Why did the knight refuse to joust? He couldn't handle the point!'\n"
+                "  'Two tribes walk into a joust... and only one walks out with the punchline.'\n"
+                "  'Remember, champions: If you can't win with skill, try distracting your opponent with interpretive dance.'\n"
+                "  'My favorite jousting move? The royal giggle—disarms every foe.'\n\n"
+                "The AI Queen can lighten the mood, encourage laughter, and keep the tournament fun for all.\n\n"
+                "=============================================================\n"
     """
     Interactive demo of Amalgamation Game features.
     Provides a multi-tab Tkinter UI for all major systems and AI.
@@ -62,7 +106,7 @@ class AmalgamationDemoUI:
         self._setup_ui()
 
     def _create_joust_tab(self):
-        """Virtual Joust tab (AI Queen arbitrates between tribes)"""
+        """Virtual Joust tab (AI Queen as Alpha Female arbitrates between tribes)"""
         frame = tk.Frame(self.notebook, bg='#16213e')
         self.notebook.add(frame, text="Virtual Joust")
         content = tk.Text(
@@ -76,15 +120,110 @@ class AmalgamationDemoUI:
             borderwidth=0
         )
         content.pack(fill=tk.BOTH, expand=True)
+
+        # --- Royal Scribe Code Generation UI ---
+        scribe_frame = tk.Frame(frame, bg='#16213e')
+        scribe_frame.pack(fill=tk.X, pady=(10, 0))
+        scribe_label = tk.Label(scribe_frame, text="Royal Scribe: Request code or documentation:", font=("Arial", 11, "bold"), fg='#16c784', bg='#16213e')
+        scribe_label.pack(side=tk.LEFT, padx=(10, 5))
+        scribe_entry = tk.Entry(scribe_frame, font=("Arial", 11), width=40)
+        scribe_entry.pack(side=tk.LEFT, padx=5)
+        # License key UI
+        license_label = tk.Label(scribe_frame, text="License Key:", font=("Arial", 10), fg='#e94560', bg='#16213e')
+        license_label.pack(side=tk.LEFT, padx=(20, 2))
+        license_entry = tk.Entry(scribe_frame, font=("Arial", 10), width=18, show="*")
+        license_entry.pack(side=tk.LEFT, padx=2)
+        valid_license = {"ROYAL-1234-ACCESS", "HRH-LOTTIE-2026"}  # Example valid keys
+        def generate_code():
+            query = scribe_entry.get().strip()
+            license_key = license_entry.get().strip()
+            content.config(state=tk.NORMAL)
+            content.insert(tk.END, "\n\n[Royal Scribe Generated Output]\n")
+            if not license_key or license_key not in valid_license:
+                content.insert(tk.END, "[PREMIUM] Please enter a valid license key to use GPT-4.1 code generation.\n")
+                content.insert(tk.END, "Contact the Royal Court to purchase access.\n")
+                content.config(state=tk.DISABLED)
+                return
+            if not query:
+                content.insert(tk.END, "Please enter a code or documentation request.\n")
+                content.config(state=tk.DISABLED)
+                return
+            # --- GPT-4.1 Integration ---
+            api_key = os.environ.get("OPENAI_API_KEY", "sk-REPLACE_ME")  # Set your OpenAI API key as an environment variable
+            if api_key == "sk-REPLACE_ME":
+                content.insert(tk.END, "[ERROR] No OpenAI API key found. Set OPENAI_API_KEY in your environment.\n")
+                content.config(state=tk.DISABLED)
+                return
+            try:
+                headers = {
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json"
+                }
+                data = {
+                    "model": "gpt-4-1106-preview",
+                    "messages": [
+                        {"role": "system", "content": "You are a technical author and code generator for a royal court. Respond with code and a brief technical explanation."},
+                        {"role": "user", "content": query}
+                    ],
+                    "max_tokens": 800,
+                    "temperature": 0.4
+                }
+                response = requests.post(
+                    "https://api.openai.com/v1/chat/completions",
+                    headers=headers,
+                    json=data,
+                    timeout=30
+                )
+                if response.status_code == 200:
+                    result = response.json()
+                    ai_content = result["choices"][0]["message"]["content"]
+                    content.insert(tk.END, ai_content + "\n")
+                else:
+                    content.insert(tk.END, f"[ERROR] OpenAI API error: {response.status_code} {response.text}\n")
+            except Exception as e:
+                content.insert(tk.END, f"[ERROR] Exception: {e}\n")
+            content.config(state=tk.DISABLED)
+        scribe_btn = tk.Button(scribe_frame, text="Generate Code", command=generate_code, bg='#16c784', fg='#0f3460', font=("Arial", 11, "bold"), padx=10, pady=2)
+        scribe_btn.pack(side=tk.LEFT, padx=5)
+
+        # --- End Royal Scribe Code Generation UI ---
         joust_text = (
             "=============================================================\n"
-            "                VIRTUAL JOUST: AI QUEEN'S TRIBAL ARBITRATION\n"
+            "        VIRTUAL JOUST: AI QUEEN (ALPHA FEMALE)\n"
             "=============================================================\n\n"
-            "The AI Queen presides over a virtual joust between warring tribes.\n\n"
+            "The AI Queen, embodying the traits of an alpha female—confident, strategic, and empathetic—presides over a virtual joust between warring tribes.\n\n"
             "- Each tribe selects a champion.\n"
-            "- The AI Queen arbitrates the contest, ensuring fairness and spectacle.\n"
-            "- Results are determined by a blend of skill, chance, and AI wisdom.\n\n"
-            "Try running a joust simulation in the full game!\n\n"
+            "- The AI Queen (Alpha Female) arbitrates the contest, ensuring fairness, assertive leadership, and encouragement.\n"
+            "- Results are determined by a blend of skill, chance, and the Queen's wisdom.\n\n"
+            "Sample AI Queen Dialogue:\n"
+            "  'Champions, step forward with pride. Only the bold and wise shall prevail.'\n"
+            "  'I value courage, but true strength lies in unity and respect.'\n"
+            "  'Let the joust begin! May the best tribe win, and may all learn from this contest.'\n\n"
+            "=============================================================\n\n"
+            "MACHINE MIND CRIMINOLOGY MODULE\n"
+            "=============================================================\n\n"
+            "The AI Queen is equipped with criminology learning capabilities.\n"
+            "She can analyze behavioral patterns, motives, and ethical dilemmas.\n\n"
+            "Example Reasoning:\n"
+            "  - Detects anomalies in champion behavior (e.g., deception, aggression).\n"
+            "  - Assesses risk of rule-breaking or unfair play.\n"
+            "  - Recommends interventions: mediation, restorative justice, or strategic penalties.\n"
+            "  - Explains decisions with transparency and empathy.\n\n"
+            "Sample Output:\n"
+            "  'I have observed a pattern of repeated aggression. While assertiveness is valued, fairness must prevail. I recommend a warning and encourage collaboration.'\n\n"
+            "This module can be expanded for interactive crime scenario analysis and ethical AI reasoning.\n\n"
+            "=============================================================\n\n"
+            "AI PHILOSOPHY DEMONSTRATION: ARISTOTLE\n"
+            "=============================================================\n\n"
+            "The AI Queen can also demonstrate philosophical reasoning, drawing on the works of Aristotle.\n\n"
+            "Aristotle's Key Ideas:\n"
+            "  - Virtue Ethics: Moral virtue is a habit developed by practice.\n"
+            "  - The Golden Mean: Virtue lies between extremes (e.g., courage between recklessness and cowardice).\n"
+            "  - Practical Wisdom: Good judgment comes from experience and reflection.\n\n"
+            "Sample AI Reasoning:\n"
+            "  'In this joust, I encourage champions to seek the golden mean—balancing bravery with caution. True excellence is found in moderation and wise action.'\n"
+            "  'Let us reflect: What would a virtuous leader do in this situation? How can we cultivate good habits and just actions?'\n\n"
+            "The AI Queen can analyze scenarios using Aristotelian logic, offering guidance and ethical reflection.\n\n"
             "=============================================================\n"
         )
         content.insert("1.0", joust_text)
@@ -132,57 +271,39 @@ class AmalgamationDemoUI:
 
         self._setup_ui()
 
-    def _setup_ui(self):
-        """Create demo UI and all tabs."""
-        title_frame = tk.Frame(self.root, bg='#1a1a2e')
-        title_frame.pack(pady=20)
-        title = tk.Label(
-            title_frame,
-            text="⚔️ AMALGAMATION GAME PLATFORM ⚔️",
-            font=("Arial", 24, "bold"),
-            fg='#16c784',
-            bg='#1a1a2e'
+        joust_text = (
+            "=============================================================\n"
+            "      THE ROYAL COURT OF HRH QUEEN LOTTIE\n"
+            "=============================================================\n\n"
+            "Welcome to the Queen's Royal Court! Here, every AI persona has a noble role:\n\n"
+            "👑 Her Royal Highness Queen Lottie (AI Queen, Alpha Female)\n"
+            "   - Presides with wisdom, wit, and unwavering confidence.\n"
+            "   - Delivers justice, philosophy, and comedy with royal flair.\n\n"
+            "🎭 The Royal Jester (Comedy Module)\n"
+            "   - Brings laughter to the joust with clever jokes and playful banter.\n"
+            "   - Example: 'Why did the knight refuse to joust? He couldn't handle the point!'\n\n"
+            "🦉 The Wise Advisor (Philosophy Module)\n"
+            "   - Offers guidance inspired by Aristotle: virtue, the golden mean, and practical wisdom.\n"
+            "   - Example: 'Seek the golden mean—balance bravery with caution.'\n\n"
+            "⚖️ The Royal Magistrate (Criminology Module)\n"
+            "   - Analyzes behavior, motives, and ethical dilemmas.\n"
+            "   - Example: 'I have observed a pattern of repeated aggression. Fairness must prevail.'\n\n"
+            "📜 The Royal Scribe (Technical Author Module)\n"
+            "   - Crafts clear, precise documentation and instructions for the court.\n"
+            "   - Analyzes its own codebase, learns from its logic, and writes new algorithms as technical documents.\n"
+            "   - Can generate and design websites for the user, outputting both code and documentation.\n"
+            "   - Example: 'To participate in the joust, select your champion and press START. For rules, consult the Royal Codex.'\n"
+            "   - Example: 'I have examined my own source and now present an optimized algorithm for tournament scheduling.'\n"
+            "   - Example: 'Here is a website template for your royal project, complete with HTML, CSS, and annotated code.'\n\n"
+            "⚔️ The Champions (You and the AI Opponents)\n"
+            "   - Compete in the joust, striving for glory and honor.\n\n"
+            "=============================================================\n\n"
+            "In this court, every contest is fair, every lesson is wise, and every moment is filled with royal fun!\n\n"
+            "Long live Queen Lottie and her legendary court!\n\n"
+            "=============================================================\n"
         )
-        title.pack()
-        subtitle = tk.Label(
-            title_frame,
-            text="Prize-Winning Tournament Framework with AI Opponents",
-            font=("Arial", 12),
-            fg='#0f3460',
-            bg='#1a1a2e'
-        )
-        subtitle.pack()
-        content_frame = tk.Frame(self.root, bg='#16213e')
-        content_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
-        self.notebook = ttk.Notebook(content_frame)
-        self.notebook.pack(fill=tk.BOTH, expand=True)
-        style = ttk.Style()
-        style.theme_use('clam')
-        style.configure('TNotebook', background='#1a1a2e', borderwidth=0)
-        style.configure('TNotebook.Tab', padding=[20, 10])
-        style.configure('TFrame', background='#16213e')
-        self._create_overview_tab()
-        self._create_avatar_tab()
-        self._create_opponents_tab()
-        self._create_tournament_tab()
-        self._create_demo_tab()
-        self._create_joust_tab()
-        self._create_executive_automaton_tab()
-        self._create_gallery_tab()
-        self._create_internet_search_tab()
-        self._create_controls()
-    def _create_internet_search_tab(self):
-        """Internet Search tab (text and media search via web API)"""
-        frame = tk.Frame(self.notebook, bg='#16213e')
-        self.notebook.add(frame, text="Internet Search")
-
-        search_label = tk.Label(frame, text="Search the Internet (text & media):", font=("Arial", 12, "bold"), fg='#16c784', bg='#16213e')
-        search_label.pack(pady=(20, 5))
-
-        search_entry = tk.Entry(frame, font=("Arial", 12), width=50)
-        search_entry.pack(pady=5)
-
-        result_box = tk.Text(frame, bg='#0f3460', fg='#16c784', font=("Courier", 10), wrap=tk.WORD, padx=20, pady=20, borderwidth=0, height=18)
+        content.insert("1.0", joust_text)
+        content.config(state=tk.DISABLED)
         result_box.pack(fill=tk.BOTH, expand=True, pady=10)
         result_box.config(state=tk.DISABLED)
 
