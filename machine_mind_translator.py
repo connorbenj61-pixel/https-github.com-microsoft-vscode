@@ -115,6 +115,41 @@ class AlgorithmLite:
         }
         return hologram
 
+    def iq_test(self) -> dict:
+        """
+        Simulate an IQ test for the AI: logic, pattern recognition, and reasoning.
+        Returns a score and sample reasoning.
+        """
+        # Simple logic/pattern test (expandable)
+        logic_questions = [
+            ("What comes next in the sequence: 2, 4, 8, 16, ?", "32"),
+            ("If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?", "Yes"),
+            ("Which is the odd one out: Apple, Banana, Carrot, Grape?", "Carrot"),
+            ("If you rearrange the letters 'CIFAIPC' you get a name of a(n):", "Pacific"),
+            ("What is 15% of 200?", "30")
+        ]
+        correct = 0
+        explanations = []
+        for q, answer in logic_questions:
+            # Simulate reasoning (hardcoded for now)
+            if q == logic_questions[0][0]:
+                explanations.append("Sequence doubles each time: 16*2=32.")
+                correct += 1
+            elif q == logic_questions[1][0]:
+                explanations.append("Transitive logic: all bloops are lazzies.")
+                correct += 1
+            elif q == logic_questions[2][0]:
+                explanations.append("Carrot is a vegetable, others are fruits.")
+                correct += 1
+            elif q == logic_questions[3][0]:
+                explanations.append("Anagram: 'CIFAIPC' = 'PACIFIC'.")
+                correct += 1
+            elif q == logic_questions[4][0]:
+                explanations.append("15% of 200 = 0.15*200 = 30.")
+                correct += 1
+        iq_score = 100 + correct * 20  # Simple scale
+        return {"score": iq_score, "max": 200, "correct": correct, "explanations": explanations}
+
 # Example usage (for testing)
 if __name__ == "__main__":
     translator = AlgorithmLite()
@@ -124,3 +159,4 @@ if __name__ == "__main__":
     print(translator.turing_test("I feel sad"))
     print(translator.learn_human_condition("I feel sad"))
     print(translator.generate_holographic_human_mind())
+    print(translator.iq_test())

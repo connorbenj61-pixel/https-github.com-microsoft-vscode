@@ -38,24 +38,201 @@ def get_wifi_status():
     except Exception as e:
         return f"WiFi status unavailable: {e}"
 
+
 class AmalgamationDemoUI:
-    """Interactive demo of Amalgamation Game features"""
-    
+    """
+    Interactive demo of Amalgamation Game features.
+    Provides a multi-tab Tkinter UI for all major systems and AI.
+    """
+
     def __init__(self, root):
         self.root = root
         self.root.title("AMALGAMATION GAME - Interactive Demo")
         self.root.geometry("1200x800")
         self.root.configure(bg='#1a1a2e')
-        
+
         # Game setup
         self.engine = GameEngine()
         self.player_avatar = create_player_avatar(name="Royal Healer Knight")
         self.avatar_display = AvatarDisplay(self.player_avatar)
-        
+
         self.demo_running = False
         self.demo_step = 0
-        
+
         self._setup_ui()
+
+    def _create_joust_tab(self):
+        """Virtual Joust tab (AI Queen arbitrates between tribes)"""
+        frame = tk.Frame(self.notebook, bg='#16213e')
+        self.notebook.add(frame, text="Virtual Joust")
+        content = tk.Text(
+            frame,
+            bg='#0f3460',
+            fg='#e94560',
+            font=("Courier", 11),
+            wrap=tk.WORD,
+            padx=20,
+            pady=20,
+            borderwidth=0
+        )
+        content.pack(fill=tk.BOTH, expand=True)
+        joust_text = (
+            "=============================================================\n"
+            "                VIRTUAL JOUST: AI QUEEN'S TRIBAL ARBITRATION\n"
+            "=============================================================\n\n"
+            "The AI Queen presides over a virtual joust between warring tribes.\n\n"
+            "- Each tribe selects a champion.\n"
+            "- The AI Queen arbitrates the contest, ensuring fairness and spectacle.\n"
+            "- Results are determined by a blend of skill, chance, and AI wisdom.\n\n"
+            "Try running a joust simulation in the full game!\n\n"
+            "=============================================================\n"
+        )
+        content.insert("1.0", joust_text)
+        content.config(state=tk.DISABLED)
+
+    def _create_executive_automaton_tab(self):
+        """Executive Automaton (Office Chatbot) tab placeholder"""
+        frame = tk.Frame(self.notebook, bg='#16213e')
+        self.notebook.add(frame, text="Executive Automaton")
+        content = tk.Text(
+            frame,
+            bg='#0f3460',
+            fg='#16c784',
+            font=("Courier", 11),
+            wrap=tk.WORD,
+            padx=20,
+            pady=20,
+            borderwidth=0
+        )
+        content.pack(fill=tk.BOTH, expand=True)
+        automaton_text = (
+            "=============================================================\n"
+            "                EXECUTIVE AUTOMATON (OFFICE CHATBOT)\n"
+            "=============================================================\n\n"
+            "This tab will feature an office chatbot for executive tasks, scheduling, and productivity.\n\n"
+            "Feature coming soon!\n\n"
+            "=============================================================\n"
+        )
+        content.insert("1.0", automaton_text)
+        content.config(state=tk.DISABLED)
+
+    def __init__(self, root):
+        self.root = root
+        self.root.title("AMALGAMATION GAME - Interactive Demo")
+        self.root.geometry("1200x800")
+        self.root.configure(bg='#1a1a2e')
+
+        # Game setup
+        self.engine = GameEngine()
+        self.player_avatar = create_player_avatar(name="Royal Healer Knight")
+        self.avatar_display = AvatarDisplay(self.player_avatar)
+
+        self.demo_running = False
+        self.demo_step = 0
+
+        self._setup_ui()
+
+    def _setup_ui(self):
+        """Create demo UI and all tabs."""
+        title_frame = tk.Frame(self.root, bg='#1a1a2e')
+        title_frame.pack(pady=20)
+        title = tk.Label(
+            title_frame,
+            text="⚔️ AMALGAMATION GAME PLATFORM ⚔️",
+            font=("Arial", 24, "bold"),
+            fg='#16c784',
+            bg='#1a1a2e'
+        )
+        title.pack()
+        subtitle = tk.Label(
+            title_frame,
+            text="Prize-Winning Tournament Framework with AI Opponents",
+            font=("Arial", 12),
+            fg='#0f3460',
+            bg='#1a1a2e'
+        )
+        subtitle.pack()
+        content_frame = tk.Frame(self.root, bg='#16213e')
+        content_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        self.notebook = ttk.Notebook(content_frame)
+        self.notebook.pack(fill=tk.BOTH, expand=True)
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure('TNotebook', background='#1a1a2e', borderwidth=0)
+        style.configure('TNotebook.Tab', padding=[20, 10])
+        style.configure('TFrame', background='#16213e')
+        self._create_overview_tab()
+        self._create_avatar_tab()
+        self._create_opponents_tab()
+        self._create_tournament_tab()
+        self._create_demo_tab()
+        self._create_joust_tab()
+        self._create_executive_automaton_tab()
+        self._create_gallery_tab()
+        self._create_internet_search_tab()
+        self._create_controls()
+    def _create_internet_search_tab(self):
+        """Internet Search tab (text and media search via web API)"""
+        frame = tk.Frame(self.notebook, bg='#16213e')
+        self.notebook.add(frame, text="Internet Search")
+
+        search_label = tk.Label(frame, text="Search the Internet (text & media):", font=("Arial", 12, "bold"), fg='#16c784', bg='#16213e')
+        search_label.pack(pady=(20, 5))
+
+        search_entry = tk.Entry(frame, font=("Arial", 12), width=50)
+        search_entry.pack(pady=5)
+
+        result_box = tk.Text(frame, bg='#0f3460', fg='#16c784', font=("Courier", 10), wrap=tk.WORD, padx=20, pady=20, borderwidth=0, height=18)
+        result_box.pack(fill=tk.BOTH, expand=True, pady=10)
+        result_box.config(state=tk.DISABLED)
+
+        def do_search():
+            query = search_entry.get().strip()
+            if not query:
+                return
+            result_box.config(state=tk.NORMAL)
+            result_box.delete("1.0", tk.END)
+            result_box.insert(tk.END, f"Searching for: {query}\n\n")
+            result_box.insert(tk.END, "(API integration required. Insert your Bing/Google/SerpAPI key in the code.)\n\n")
+            # --- PLACEHOLDER: Insert API call here ---
+            # Example: Use requests to call Bing/Google/SerpAPI and parse results
+            # For now, just show a static example
+            result_box.insert(tk.END, "Example result:\n")
+            result_box.insert(tk.END, "- Wikipedia: Royal history is the study of monarchies, dynasties, and their impact.\n")
+            result_box.insert(tk.END, "- Image: https://upload.wikimedia.org/wikipedia/commons/3/3c/Queen_Victoria_1887.jpg\n")
+            result_box.insert(tk.END, "\nTo enable live search, add your API key and uncomment the code in this function.\n")
+            result_box.config(state=tk.DISABLED)
+
+        search_btn = tk.Button(frame, text="Search", command=do_search, bg='#16c784', fg='#0f3460', font=("Arial", 12, "bold"), padx=20, pady=5)
+        search_btn.pack(pady=5)
+
+    def _create_gallery_tab(self):
+        """Royal History Gallery tab (placeholder for internet images)"""
+        frame = tk.Frame(self.notebook, bg='#16213e')
+        self.notebook.add(frame, text="Royal History Gallery")
+        content = tk.Text(
+            frame,
+            bg='#0f3460',
+            fg='#16c784',
+            font=("Courier", 11),
+            wrap=tk.WORD,
+            padx=20,
+            pady=20,
+            borderwidth=0
+        )
+        content.pack(fill=tk.BOTH, expand=True)
+        gallery_text = (
+            "=============================================================\n"
+            "                ROYAL HISTORY GALLERY\n"
+            "=============================================================\n\n"
+            "This gallery will display images of royal history.\n\n"
+            "(Future update: The AI will retrieve and show images from the internet here.)\n\n"
+            "=============================================================\n"
+        )
+        content.insert("1.0", gallery_text)
+        content.config(state=tk.DISABLED)
+
+    # ...existing tab creation and control methods remain unchanged...
         
     def _setup_ui(self):
         """Create demo UI"""
