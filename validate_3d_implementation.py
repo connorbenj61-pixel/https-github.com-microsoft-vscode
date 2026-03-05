@@ -124,7 +124,7 @@ def validate():
     
     # Test 3: Guardian AI integration
     try:
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
         
         guardian = ArmourboundGuardianAI()
         successes.append("\n✓ ArmourboundGuardianAI imports successful")

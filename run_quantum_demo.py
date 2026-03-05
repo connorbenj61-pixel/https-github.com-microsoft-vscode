@@ -4,7 +4,7 @@ Quantum Computing Demonstration - ArmourboundGuardianAI
 Showcases quantum computing capabilities with practical examples.
 """
 
-from armourbound_guardian import ArmourboundGuardianAI
+from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 import json
 
 

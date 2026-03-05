@@ -1,4 +1,4 @@
-from armourbound_guardian import ArmourboundGuardianAI
+from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
 
 def main():

@@ -9,7 +9,7 @@ from quantum_computing_engine import (
     QuantumBit, QuantumGates, QuantumCircuit, QuantumErrorCorrection,
     QuantumSimulator
 )
-from armourbound_guardian import ArmourboundGuardianAI
+from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
 
 class TestQuantumBit(unittest.TestCase):

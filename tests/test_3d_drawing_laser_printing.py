@@ -11,7 +11,7 @@ from laser_printer_interface import (
     LaserConfig, ScanPath, ScanStrategy, LaserPrintJob, LaserPrinterController,
     LaserPrinterType
 )
-from armourbound_guardian import ArmourboundGuardianAI
+from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
 
 class TestPoint3D(unittest.TestCase):

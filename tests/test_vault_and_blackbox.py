@@ -8,7 +8,7 @@ from vault_and_blackbox import (
     LockedVault, BlackBox, AccessLevel, EventSeverity,
     VaultSecret, BlackBoxEvent, create_vault_and_blackbox
 )
-from armourbound_guardian import ArmourboundGuardianAI
+from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
 
 class TestLockedVault(unittest.TestCase):

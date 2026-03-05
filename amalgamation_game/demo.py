@@ -9,15 +9,14 @@ import tkinter as tk
 from tkinter import ttk
 import time
 import threading
-from game_systems.game_engine import GameEngine, GameMode, Difficulty
-from opponents.necromancer_opponent import NecromancerOpponent
-from opponents.guardian_opponent import RoyalGuardianOpponent
-from opponents.chess_3d_opponent import Chess3DOpponent
+from amalgamation_game.game_systems.game_engine import GameEngine, GameMode, Difficulty
+from amalgamation_game.opponents.necromancer_opponent import NecromancerOpponent
+from amalgamation_game.opponents.guardian_opponent import RoyalGuardianOpponent
+from amalgamation_game.opponents.chess_3d_opponent import Chess3DOpponent
 import sys
 import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'assets'))
-from avatar import create_player_avatar, AvatarDisplay
+from royal_mindmap.core import build_royal_mindmap
+from amalgamation_game.assets.avatar import create_player_avatar, AvatarDisplay
 
 
 class AmalgamationDemoUI:
@@ -671,6 +670,17 @@ def main():
     app = AmalgamationDemoUI(root)
     root.mainloop()
 
+    # Example: Print the royal mindmap for demonstration
+    mindmap = build_royal_mindmap()
+    print("\n[Royal Mindmap Integration Demo]\n")
+    print(mindmap.to_json())
+
 
 if __name__ == "__main__":
-    main()
+    # If not running as a module, re-invoke as a module for correct imports
+    if __package__ is None or __package__ == "":
+        script = os.path.relpath(__file__, os.getcwd())
+        module = script.replace(os.sep, ".")[:-3]  # strip .py
+        os.execv(sys.executable, [sys.executable, "-m", module] + sys.argv[1:])
+    else:
+        main()

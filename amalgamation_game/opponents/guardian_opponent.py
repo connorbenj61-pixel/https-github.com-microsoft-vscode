@@ -6,13 +6,21 @@ Implements squad-based tactical combat with four-guard formations
 and skill-based advancement system.
 """
 
+import sys
+import os
+# Ensure project root is in sys.path for all imports
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from dataclasses import dataclass
 from typing import Dict, List
 from enum import Enum
 import random
 
-from game_systems.game_engine import OpponentAI, GameState, Difficulty
-from armourbound_guardian import ArmourboundGuardianAI
+from amalgamation_game.game_systems.game_engine import OpponentAI, GameState, Difficulty
+from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
+from royal_mindmap.core import build_royal_mindmap
 
 
 class GuardianFormation(Enum):
@@ -116,6 +124,10 @@ class RoyalGuardianOpponent(OpponentAI):
         high-level decision-making, not real-time control.
         """
         return self.strategic_planner.plan_moon_mission()
+    
+    def get_royal_mindmap(self):
+        """Return the combined royal mindmap for advanced AI reasoning."""
+        return build_royal_mindmap()
     
     def prepare_for_game(self, difficulty: Difficulty) -> None:
         """Prepare guardian squad for match"""

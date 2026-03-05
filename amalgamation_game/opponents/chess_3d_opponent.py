@@ -10,7 +10,7 @@ from typing import Dict, List, Tuple, Optional
 from enum import Enum
 import random
 
-from game_systems.game_engine import OpponentAI, GameState, Difficulty
+from amalgamation_game.game_systems.game_engine import OpponentAI, GameState, Difficulty
 
 
 class PieceType(Enum):

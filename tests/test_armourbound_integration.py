@@ -4,7 +4,7 @@ from typing import List
 
 class TestArmourboundIntegration(unittest.TestCase):
     def test_plan_moon_mission_contents(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         ai = ArmourboundGuardianAI()
         plan = ai.plan_moon_mission()
@@ -25,7 +25,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertTrue(strategy[0].lower().startswith("define mission objectives"))
 
     def test_reason_step_toward_moon(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         ai = ArmourboundGuardianAI()
 
@@ -46,7 +46,7 @@ class TestArmourboundIntegration(unittest.TestCase):
             self.assertGreater(len(reason), 10)
 
     def test_learn_domain_language_dolphins(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         ai = ArmourboundGuardianAI()
         
@@ -58,7 +58,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertTrue(any("sounds" in step.lower() or "talk" in step.lower() for step in dolphin_plan))
 
     def test_learn_domain_language_moon(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         ai = ArmourboundGuardianAI()
         
@@ -68,7 +68,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertEqual(moon_plan, mission_plan)
 
     def test_learn_domain_language_ancient_runes(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         ai = ArmourboundGuardianAI()
         
@@ -79,7 +79,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertTrue(any("futhark" in step.lower() for step in runes_plan))
 
     def test_learn_domain_language_quantum_mechanics(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         ai = ArmourboundGuardianAI()
         
@@ -90,7 +90,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertTrue(any("schrödinger" in step.lower() for step in quantum_plan))
 
     def test_learn_domain_language_fallback(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         ai = ArmourboundGuardianAI()
         
@@ -101,7 +101,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertTrue(any("explore" in step.lower() for step in unknown_plan))
 
     def test_ai_registration_and_discovery(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         # Create and register multiple AIs
         guardian1 = ArmourboundGuardianAI()
@@ -120,7 +120,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertEqual(retrieved, guardian1)
 
     def test_ai_send_message_moon_plan(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         sender = ArmourboundGuardianAI()
         sender.register_as("Sender")
@@ -137,7 +137,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertEqual(response["recipient"], "Recipient")
 
     def test_ai_send_message_domain_learning(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         sender = ArmourboundGuardianAI()
         sender.register_as("Sender2")
@@ -152,7 +152,7 @@ class TestArmourboundIntegration(unittest.TestCase):
         self.assertIn("dolphin", response["response_text"].lower())
 
     def test_ai_receive_message_greeting(self):
-        from armourbound_guardian import ArmourboundGuardianAI
+        from amalgamation_game.armourbound_guardian import ArmourboundGuardianAI
 
         ai = ArmourboundGuardianAI()
         ai.register_as("TestGuardian")
