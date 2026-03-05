@@ -17,7 +17,26 @@ import sys
 import os
 from royal_mindmap.core import build_royal_mindmap
 from amalgamation_game.assets.avatar import create_player_avatar, AvatarDisplay
-
+import socket
+import platform
+import random
+import string
+def get_wifi_status():
+    try:
+        if platform.system() == "Windows":
+            import subprocess
+            result = subprocess.check_output(["netsh", "wlan", "show", "interfaces"], encoding="utf-8")
+            if "State" in result and "connected" in result:
+                for line in result.splitlines():
+                    if "SSID" in line and "BSSID" not in line:
+                        return f"Connected to WiFi: {line.split(':')[1].strip()}"
+                return "Connected to WiFi (SSID unknown)"
+            else:
+                return "Not connected to WiFi"
+        else:
+            return "WiFi status: Not supported on this OS"
+    except Exception as e:
+        return f"WiFi status unavailable: {e}"
 
 class AmalgamationDemoUI:
     """Interactive demo of Amalgamation Game features"""
@@ -91,6 +110,12 @@ class AmalgamationDemoUI:
         
         # Tab 5: Live Demo
         self._create_demo_tab()
+        
+        # Tab 6: Virtual Joust (Bonus)
+        self._create_joust_tab()
+        
+        # Tab 7: Executive Automaton (Office Chatbot)
+        self._create_executive_automaton_tab()
         
         # Control panel
         self._create_controls()
