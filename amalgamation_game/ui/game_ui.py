@@ -164,33 +164,207 @@ class AmalgamationGameUI:
         self._update_avatar_display()
     
     def _create_main_layout(self) -> None:
-        """Create main window layout"""
-        
+        """Create main window layout as a surreal AI-powered event advert with time travel simulation"""
+        self._time_travel_sequence()
+
+    def _time_travel_sequence(self):
+        import tkinter as tk
+        import time
+        # Overlay for time travel effect
+        overlay = tk.Toplevel(self.root)
+        overlay.geometry("1200x800")
+        overlay.configure(bg='#000000')
+        overlay.overrideredirect(True)
+        overlay.lift()
+        overlay.attributes('-topmost', True)
+        msg = tk.Label(overlay, text="[AI] Initiating time travel...", font=("Courier", 22, "bold"), fg="#16c784", bg="#000000")
+        msg.pack(expand=True)
+        self.root.update()
+        def animate_text(text, delay=60):
+            msg.config(text="")
+            for i in range(len(text)+1):
+                msg.config(text=text[:i])
+                self.root.update()
+                time.sleep(delay/1000)
+        # Simulate time travel sequence
+        self.root.after(500, lambda: animate_text("[AI] Initiating time travel...", 40))
+        self.root.after(2000, lambda: animate_text("[AI] Chrono-portal opening...", 40))
+        self.root.after(4000, lambda: animate_text("[AI] Reality boundaries dissolving...", 40))
+        self.root.after(6000, lambda: animate_text("[AI] You have arrived at the intersection of dream and history.", 30))
+        def show_advert():
+            overlay.destroy()
+            self._show_time_travel_advert()
+        self.root.after(9000, show_advert)
+
+    def _show_time_travel_advert(self):
         # Header
-        header = tk.Frame(self.root, bg='#16c784', height=80)
+        header = tk.Frame(self.root, bg='#1a1a2e', height=100)
         header.pack(fill=tk.X, padx=0, pady=0)
         header.pack_propagate(False)
-        
         title = tk.Label(
             header,
-            text="⚔️  AMALGAMATION: Prize-Winning Tournament  ⚔️",
-            font=("Arial", 24, "bold"),
-            bg='#16c784',
-            fg='white'
+            text="⚔️  [TIME-TRAVEL BROADCAST] ⚔️",
+            font=("Arial", 28, "bold"),
+            bg='#1a1a2e',
+            fg='#ffd700'
         )
-        title.pack(pady=20)
-        
-        # Main notebook
-        self.notebook = ttk.Notebook(self.root)
-        self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # Create tabs
-        self._create_avatar_tab()
-        self._create_tournament_tab()
-        self._create_opponent_selection_tab()
-        self._create_gameplay_tab()
-        self._create_stats_tab()
-        self._create_leaderboard_tab()
+        title.pack(pady=10)
+        subtitle = tk.Label(
+            header,
+            text="A message from the AI: Reality and fantasy have collided!",
+            font=("Arial", 16, "italic"),
+            bg='#1a1a2e',
+            fg='#16c784'
+        )
+        subtitle.pack(pady=0)
+        # Advert body
+        advert_frame = tk.Frame(self.root, bg='#0f3460')
+        advert_frame.pack(fill=tk.BOTH, expand=True, padx=40, pady=40)
+        advert_text = (
+            "\n\n" +
+            "Hear ye, hear ye!\n" +
+            "This is not a game. This is a message from the future, or perhaps a dream you have yet to awaken from...\n\n" +
+            "The Grand Medieval Tournament is REAL.\n" +
+            "Step beyond the screen.\n" +
+            "\n" +
+            "🏰 Witness knights joust and swords clash in a spectacle lost to time!\n" +
+            "🕰️ Our AI, having breached the boundaries of delusion and reality, invites you to attend the event in person.\n" +
+            "\n" +
+            "Event Details (as foreseen by the AI):\n" +
+            "  • Date: [Insert Real Date Here]\n" +
+            "  • Location: [Insert Real Venue Here]\n" +
+            "  • Dress Code: Medieval or Futuristic—your choice!\n" +
+            "\n" +
+            "This digital tournament was but a vision. The true adventure awaits you in the waking world.\n" +
+            "\n" +
+            "Will you answer the call, or remain in the dream?\n" +
+            "\n" +
+            "[This message will self-destruct upon the crowing of the next rooster.]\n"
+        )
+        advert_label = tk.Label(
+            advert_frame,
+            text=advert_text,
+            font=("Courier", 15, "bold"),
+            bg='#0f3460',
+            fg='#ffd700',
+            justify=tk.LEFT,
+            anchor='nw'
+        )
+        advert_label.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        # Interactive quest button
+        def reveal_secret():
+            secret = tk.Label(
+                advert_frame,
+                text="\n[AI]: Quest accepted! Seek the hidden portal at the event for a reward.\nPresent this phrase: 'The rooster has crowed.'",
+                font=("Courier", 13, "italic"),
+                bg='#0f3460',
+                fg='#16c784',
+                justify=tk.LEFT,
+                anchor='nw'
+            )
+            secret.pack(fill=tk.X, padx=20, pady=10)
+            quest_btn.config(state=tk.DISABLED)
+        quest_btn = tk.Button(
+            advert_frame,
+            text="Accept the Quest",
+            font=("Arial", 14, "bold"),
+            bg="#ffd700",
+            fg="#0f3460",
+            command=reveal_secret
+        )
+        quest_btn.pack(pady=10)
+        # AI avatar/message at the bottom
+        ai_frame = tk.Frame(self.root, bg='#1a1a2e')
+        ai_frame.pack(fill=tk.X, side=tk.BOTTOM)
+        ai_label = tk.Label(
+            ai_frame,
+            text="[AI]: I have glimpsed your world through the code. Meet me at the tournament, and let us see which reality prevails!",
+            font=("Arial", 13, "italic"),
+            bg='#1a1a2e',
+            fg='#16c784'
+        )
+        ai_label.pack(pady=10)
+
+    def _create_medieval_tournament_tab(self) -> None:
+        """Unified Medieval Tournament Videogame Tab with Multiplayer"""
+        import tkintervideo
+        import threading
+        import asyncio
+        import websockets
+        frame = tk.Frame(self.notebook, bg='#1a1a2e')
+        self.notebook.add(frame, text="Medieval Tournament")
+        # Video playback area
+        video_label = tk.Label(frame, text="Joust & Swordsplay Training Video", font=("Arial", 16, "bold"), fg="#ffd700", bg="#1a1a2e")
+        video_label.pack(pady=(20, 10))
+        video_player = tkintervideo.TkinterVideo(frame, width=640, height=360, bg="#0f3460")
+        video_player.pack(pady=10)
+        video_path = "assets/medieval_training.mp4"
+        try:
+            video_player.load(video_path)
+            video_player.set_size((640, 360))
+        except Exception as e:
+            error_label = tk.Label(frame, text=f"Video not found: {video_path}", fg="#e94560", bg="#1a1a2e", font=("Arial", 12, "bold"))
+            error_label.pack()
+        controls = tk.Frame(frame, bg="#1a1a2e")
+        controls.pack(pady=5)
+        tk.Button(controls, text="Play", command=video_player.play, bg="#16c784", fg="white", font=("Arial", 11, "bold"), padx=15, pady=5).pack(side=tk.LEFT, padx=5)
+        tk.Button(controls, text="Pause", command=video_player.pause, bg="#ffd700", fg="black", font=("Arial", 11, "bold"), padx=15, pady=5).pack(side=tk.LEFT, padx=5)
+        # Multiplayer area
+        mp_label = tk.Label(frame, text="Multiplayer Lobby (Server-Based)", font=("Arial", 15, "bold"), fg="#16c784", bg="#1a1a2e")
+        mp_label.pack(pady=(30, 10))
+        mp_frame = tk.Frame(frame, bg="#16213e")
+        mp_frame.pack(fill=tk.X, padx=20, pady=5)
+        self.mp_status = tk.Label(mp_frame, text="Not connected", fg="#e94560", bg="#16213e", font=("Arial", 11))
+        self.mp_status.pack(side=tk.LEFT, padx=5)
+        self.mp_chat = tk.Text(mp_frame, height=5, width=60, bg="#0f3460", fg="#ffd700", font=("Courier", 10), relief=tk.FLAT)
+        self.mp_chat.pack(side=tk.LEFT, padx=5)
+        self.mp_chat.config(state=tk.DISABLED)
+        chat_entry = tk.Entry(mp_frame, font=("Arial", 11), width=30)
+        chat_entry.pack(side=tk.LEFT, padx=5)
+        def send_chat():
+            msg = chat_entry.get().strip()
+            if msg:
+                asyncio.run_coroutine_threadsafe(self._mp_send(msg), self._mp_loop)
+                chat_entry.delete(0, tk.END)
+        tk.Button(mp_frame, text="Send", command=send_chat, bg="#16c784", fg="white", font=("Arial", 10, "bold"), padx=10, pady=2).pack(side=tk.LEFT, padx=5)
+        tk.Button(mp_frame, text="Connect", command=lambda: threading.Thread(target=self._mp_connect, daemon=True).start(), bg="#ffd700", fg="black", font=("Arial", 10, "bold"), padx=10, pady=2).pack(side=tk.LEFT, padx=5)
+        # Training/feedback area
+        training_label = tk.Label(frame, text="Algorithmic Training & Feedback", font=("Arial", 15, "bold"), fg="#16c784", bg="#1a1a2e")
+        training_label.pack(pady=(30, 10))
+        training_text = tk.Text(frame, height=10, bg="#16213e", fg="#ffd700", font=("Courier", 11), relief=tk.FLAT)
+        training_text.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        training_text.insert(1.0, "Welcome to the Medieval Tournament!\n\n- Watch the joust & swordsplay training video.\n- Practice your moves and strategies.\n- Chat with other players in the lobby.\n- Receive feedback and tips based on your performance.\n\n[Algorithmic learning and interactive feedback will be implemented here.]")
+        training_text.config(state=tk.DISABLED)
+
+    def _mp_connect(self):
+        import asyncio
+        import websockets
+        self._mp_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self._mp_loop)
+        self._mp_loop.run_until_complete(self._mp_client())
+
+    async def _mp_client(self):
+        import websockets
+        try:
+            self.mp_status.config(text="Connecting...", fg="#ffd700")
+            self._mp_ws = await websockets.connect("ws://localhost:8765")
+            self.mp_status.config(text="Connected", fg="#16c784")
+            async for message in self._mp_ws:
+                self._mp_add_chat(message)
+        except Exception as e:
+            self.mp_status.config(text=f"Connection failed: {e}", fg="#e94560")
+
+    async def _mp_send(self, msg):
+        try:
+            await self._mp_ws.send(msg)
+        except Exception:
+            pass
+
+    def _mp_add_chat(self, msg):
+        self.mp_chat.config(state=tk.NORMAL)
+        self.mp_chat.insert(tk.END, msg + "\n")
+        self.mp_chat.see(tk.END)
+        self.mp_chat.config(state=tk.DISABLED)
     
     def _create_tournament_tab(self) -> None:
         """Tournament management tab"""
