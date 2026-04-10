@@ -1,10 +1,10 @@
-
 """
 Animus AI: Foundation for an IT-skilled AI agent.
 Assimilates Archivist DNA AI for advanced text evolution.
 """
 
 from archivist_dna import archivist_dna_assimilate
+import subprocess
 
 class Animus:
     def __init__(self, name="Animus"):
@@ -37,6 +37,24 @@ class Animus:
     def list_skills(self):
         return self.skills
 
+    def encrypt_code_file(self, input_path, output_path, password):
+        """
+        Encrypt a code file using cipher_tool.py
+        """
+        result = subprocess.run([
+            "python", "cipher_tool.py", "encrypt", input_path, output_path, password
+        ], capture_output=True, text=True)
+        return result.stdout + result.stderr
+
+    def decrypt_code_file(self, input_path, output_path, password):
+        """
+        Decrypt a code file using cipher_tool.py
+        """
+        result = subprocess.run([
+            "python", "cipher_tool.py", "decrypt", input_path, output_path, password
+        ], capture_output=True, text=True)
+        return result.stdout + result.stderr
+
 
 if __name__ == "__main__":
     animus = Animus()
@@ -48,3 +66,10 @@ if __name__ == "__main__":
     print("\n[Animus Assimilation Demo]")
     phrase = "Assimilate this phrase with genius DNA."
     print(animus.assimilate_phrase(phrase))
+    # Demonstrate encryption and decryption
+    print("\n[Encryption/Decryption Demo]")
+    input_file = "example.txt"
+    output_file = "example_encrypted.txt"
+    password = "password"
+    print(animus.encrypt_code_file(input_file, output_file, password))
+    print(animus.decrypt_code_file(output_file, input_file, password))
