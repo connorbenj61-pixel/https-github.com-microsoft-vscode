@@ -1,3 +1,56 @@
+import math
+def compute_universe():
+    """
+    Compute the minimum possible size of the universe using Planck's constant.
+    """
+    # Planck length (meters)
+    planck_length = 1.616255e-35
+    # Observable universe radius (meters, approx)
+    universe_radius = 4.4e26
+    # Number of Planck lengths in the universe
+    num_planck = universe_radius / planck_length
+    return (f"Universe is finite.\n"
+            f"Minimum size: Planck length = {planck_length:.2e} m\n"
+            f"Observable universe radius: {universe_radius:.2e} m\n"
+            f"Number of Planck lengths in radius: {num_planck:.2e}")
+
+def generate_brainwaves():
+    """
+    Simulate virtual brainwave patterns using PC hardware (random/sinusoidal data).
+    """
+    import math
+    import random
+    waves = ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']
+    freqs = [2, 6, 10, 20, 40]  # Hz
+    output = []
+    for wave, freq in zip(waves, freqs):
+        # Simulate 1 second of data, 20 samples
+        samples = [math.sin(2*math.pi*freq*t/20) + random.uniform(-0.2,0.2) for t in range(20)]
+        graph = ''.join(['*' if s > 0 else '-' for s in samples])
+        output.append(f"{wave:6}: {graph}")
+    return "Simulated Brainwaves:\n" + '\n'.join(output)
+def matter_improbability():
+    """
+    Simulate the probability of matter as insignificant as a speck of dust.
+    Returns a string with the calculated improbability.
+    """
+    # For demonstration, use a very small probability
+    dust_mass = 1e-12  # kg (arbitrary small mass)
+    universe_mass = 1e53  # kg (approximate mass of observable universe)
+    probability = dust_mass / universe_mass
+    return f"Improbability of matter (dust speck): {probability:.2e} (effectively zero)"
+import random
+def compose_music():
+    """
+    Compose a simple melody as a sequence of notes (C D E F G A B) and durations.
+    """
+    notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    melody = []
+    for _ in range(16):
+        note = random.choice(notes)
+        duration = random.choice(['quarter', 'eighth', 'half'])
+        melody.append(f"{note} ({duration})")
+    return "Generated Melody: " + ' | '.join(melody)
 import datetime
 
 SYSTEM_PROMPT = """
@@ -16,7 +69,7 @@ AUDIT_FILE = "archivist_audit.log"
 
 
 def log_audit(role, text):
-    timestamp = datetime.datetime.utcnow().isoformat()
+    timestamp = datetime.datetime.now(datetime.UTC).isoformat()
     with open(AUDIT_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{timestamp}] {role.upper()}: {text}\n")
 
@@ -97,7 +150,16 @@ def main():
             continue
 
         log_audit("user", user_input)
-        response = generate_response(user_input)
+        if user_input.lower() == "compose music":
+            response = compose_music()
+        elif user_input.lower() == "matter improbability":
+            response = matter_improbability()
+        elif user_input.lower() == "compute universe":
+            response = compute_universe()
+        elif user_input.lower() == "generate brainwaves":
+            response = generate_brainwaves()
+        else:
+            response = generate_response(user_input)
         print(f"ARCHIVIST: {response}")
         log_audit("archivist", response)
 
