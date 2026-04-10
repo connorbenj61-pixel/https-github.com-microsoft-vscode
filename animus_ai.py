@@ -55,6 +55,52 @@ class Animus:
         ], capture_output=True, text=True)
         return result.stdout + result.stderr
 
+    def camouflage_code(self, code: str) -> bytes:
+        """
+        Camouflage code by reversing and flipping the parity (bitwise NOT) of each byte.
+        Returns obfuscated bytes.
+        """
+        reversed_bytes = code[::-1].encode('utf-8')
+        camouflaged = bytes([b ^ 0xFF for b in reversed_bytes])
+        return camouflaged
+
+    def reveal_code(self, camouflaged: bytes) -> str:
+        """
+        Reveal camouflaged code by reversing the camouflage process.
+        Returns the original code string.
+        """
+        reversed_bytes = bytes([b ^ 0xFF for b in camouflaged])
+        return reversed_bytes[::-1].decode('utf-8')
+
+    def camouflage_file(self, input_path: str, output_path: str):
+        """
+        Camouflage a file by reversing and flipping the parity of its bytes.
+        Writes the camouflaged bytes to output_path.
+        """
+        with open(input_path, 'rb') as f:
+            data = f.read()
+        camouflaged = bytes([b ^ 0xFF for b in data[::-1]])
+        with open(output_path, 'wb') as f:
+            f.write(camouflaged)
+
+    def reveal_file(self, input_path: str, output_path: str):
+        """
+        Reveal a camouflaged file by reversing the camouflage process.
+        Writes the original bytes to output_path.
+        """
+        with open(input_path, 'rb') as f:
+            camouflaged = f.read()
+        revealed = bytes([b ^ 0xFF for b in camouflaged])[::-1]
+        with open(output_path, 'wb') as f:
+            f.write(revealed)
+
+    def get_iq(self) -> int:
+        """
+        Return a simulated IQ value for the AI.
+        """
+        # You can make this dynamic or random if desired
+        return 233
+
 
 if __name__ == "__main__":
     animus = Animus()
@@ -66,6 +112,14 @@ if __name__ == "__main__":
     print("\n[Animus Assimilation Demo]")
     phrase = "Assimilate this phrase with genius DNA."
     print(animus.assimilate_phrase(phrase))
+
+    # Demonstrate camouflage and reveal
+    print("\n[Animus Camouflage Demo]")
+    code_sample = "print('Hello, world!')"
+    camouflaged = animus.camouflage_code(code_sample)
+    print("Camouflaged bytes:", camouflaged)
+    revealed = animus.reveal_code(camouflaged)
+    print("Revealed code:", revealed)
     # Demonstrate encryption and decryption
     print("\n[Encryption/Decryption Demo]")
     input_file = "example.txt"
@@ -73,3 +127,9 @@ if __name__ == "__main__":
     password = "password"
     print(animus.encrypt_code_file(input_file, output_file, password))
     print(animus.decrypt_code_file(output_file, input_file, password))
+    # Demonstrate camouflage and reveal
+    print("\n[Camouflage/Reveal Demo]")
+    code = "Hello, World!"
+    camouflaged = animus.camouflage_code(code)
+    print("Camouflaged:", camouflaged)
+    print("Revealed:", animus.reveal_code(camouflaged))
