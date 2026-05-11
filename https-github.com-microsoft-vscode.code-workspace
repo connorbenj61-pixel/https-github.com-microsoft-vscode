@@ -2,6 +2,14 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../../../Personal Vault-BC-0322603/Documents/.github/workflows"
 		}
-	]
+	],
+	"settings": {
+		"files.watcherExclude": {
+			"**/target": true
+		}
+	}
 }
