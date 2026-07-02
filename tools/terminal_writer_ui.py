@@ -228,7 +228,15 @@ def display_menu():
     print("4) Self-update this repository")
     print("5) Show a creative prompt")
     print("6) Show code completion example")
-    print("7) Exit")
+    print("7) Publish a script (create exe or wrapper + shortcut)")
+    print("8) Toggle autopublish on save")
+    print("9) Start/Stop autopublish watcher")
+    print("10) Run hello_world.py")
+    print("11) Run sorter.py")
+    print("12) Run demo_logger.py")
+    print("13) Publish example scripts (hello_world, sorter, demo_logger)")
+    print("14) Publish this UI (tools/terminal_writer_ui.py)")
+    print("15) Exit")
     return input("Choose an option: ").strip()
 
 
@@ -315,6 +323,50 @@ def show_prompt():
 
 
 def main():
+    # watcher state
+    watcher_thread = None
+    watcher_stop_event = None
+
+    def start_watcher():
+        nonlocal watcher_thread, watcher_stop_event
+        if watcher_thread and watcher_thread.is_alive():
+            print("Watcher already running.")
+            return
+        watcher_stop_event = threading.Event()
+
+        def _watch():
+            seen = {}
+            while not watcher_stop_event.is_set():
+                for p in BASE_DIR.rglob('*.py'):
+                    try:
+                        m = p.stat().st_mtime
+                    except Exception:
+                        continue
+                    if p not in seen or m > seen[p]:
+                        seen[p] = m
+                        # publish new/changed files
+                        try:
+                            publish_script(p)
+                        except Exception as exc:
+                            print(f"Watcher publish failed for {p}: {exc}")
+                time.sleep(5)
+
+        watcher_thread = threading.Thread(target=_watch, daemon=True)
+        watcher_thread.start()
+        print("Autopublish watcher started.")
+
+    def stop_watcher():
+        nonlocal watcher_thread, watcher_stop_event
+        if watcher_thread and watcher_thread.is_alive():
+            watcher_stop_event.set()
+            watcher_thread.join(timeout=3)
+            watcher_thread = None
+            watcher_stop_event = None
+            print("Autopublish watcher stopped.")
+        else:
+            print("Watcher not running.")
+
+    global AUTOPUBLISH_ENABLED
     while True:
         choice = display_menu()
         if choice == '1':
@@ -336,10 +388,61 @@ def main():
             show_completion_example()
             pause()
         elif choice == '7':
+            fn = input('Enter script to publish (relative or absolute): ').strip()
+            if fn:
+                p = Path(fn)
+                if not p.is_absolute():
+                    p = Path.cwd() / p
+                publish_script(p)
+            pause()
+        elif choice == '8':
+            AUTOPUBLISH_ENABLED = not AUTOPUBLISH_ENABLED
+            print(f"AUTOPUBLISH_ENABLED = {AUTOPUBLISH_ENABLED}")
+            pause()
+        elif choice == '9':
+            if watcher_thread and watcher_thread.is_alive():
+                stop_watcher()
+            else:
+                start_watcher()
+            pause()
+        elif choice == '10':
+            try:
+                subprocess.run([sys.executable, str(BASE_DIR / 'hello_world.py')], cwd=str(BASE_DIR))
+            except Exception as exc:
+                print(f"Failed to run hello_world.py: {exc}")
+            pause()
+        elif choice == '11':
+            try:
+                subprocess.run([sys.executable, str(BASE_DIR / 'sorter.py')], cwd=str(BASE_DIR))
+            except Exception as exc:
+                print(f"Failed to run sorter.py: {exc}")
+            pause()
+        elif choice == '12':
+            try:
+                subprocess.run([sys.executable, str(BASE_DIR / 'demo_logger.py')], cwd=str(BASE_DIR))
+            except Exception as exc:
+                print(f"Failed to run demo_logger.py: {exc}")
+            pause()
+        elif choice == '13':
+            for s in ('hello_world.py', 'sorter.py', 'demo_logger.py'):
+                try:
+                    publish_script(BASE_DIR / s)
+                except Exception as exc:
+                    print(f"Publish failed for {s}: {exc}")
+            pause()
+        elif choice == '14':
+            # Publish the UI script itself
+            try:
+                publish_script(BASE_DIR / 'tools' / 'terminal_writer_ui.py')
+            except Exception as exc:
+                print(f"Publish failed for terminal_writer_ui.py: {exc}")
+            pause()
+        elif choice == '15':
             print("Goodbye. Keep coding and having fun.")
+            stop_watcher()
             break
         else:
-            print("Unknown option. Please choose 1-7.")
+            print("Unknown option. Please choose a valid menu number.")
             pause()
 
 

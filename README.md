@@ -2,6 +2,16 @@
 
 This repository serves as a reference to the official [Microsoft Visual Studio Code](https://github.com/microsoft/vscode) open-source project.
 
+## Quick Start
+
+- Open this repository in Visual Studio Code.
+- Use the local virtual environment at `.venv`.
+- Run helper tools from `tools/README.md`.
+- Launch terminal shortcuts with:
+  - `run_terminal_launcher_vs.bat run upgrade-console`
+  - `run_terminal_upgrade_vs.bat`
+  - `run_terminal_clone_vs.bat <repo_url> [target_dir]`
+
 ## About Visual Studio Code
 
 Visual Studio Code is a lightweight but powerful source code editor which runs on your desktop and is available for Windows, macOS and Linux. It comes with built-in support for JavaScript, TypeScript and Node.js and has a rich ecosystem of extensions for other languages and runtimes (such as C++, C#, Java, Python, PHP, Go, .NET).
@@ -43,6 +53,13 @@ If you're interested in contributing to VS Code:
 - **API Documentation**: [https://code.visualstudio.com/api](https://code.visualstudio.com/api)
 - **Updates**: [https://code.visualstudio.com/updates](https://code.visualstudio.com/updates)
 - **Blog**: [https://code.visualstudio.com/blog](https://code.visualstudio.com/blog)
+
+## Local Tools
+
+- **Tools README**: `tools/README.md`
+- **Quick start guide**: `docs/QUICK_START.md`
+- **Terminal launcher**: `tools/terminal_launcher_vs.py`
+- **Batch shortcuts**: `run_terminal_launcher_vs.bat`, `run_terminal_upgrade_vs.bat`, `run_terminal_clone_vs.bat`
 
 ## Community
 
