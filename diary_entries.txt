@@ -1,0 +1,2 @@
+BUILD SPACECRAFT
+[CHESS] Nubian starship: 3D move executed on battle board.
