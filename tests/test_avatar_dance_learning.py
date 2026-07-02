@@ -12,7 +12,7 @@ class AvatarDanceLearningTests(unittest.TestCase):
         avatar = avatar_dance_learning.AvatarDanceLearner(name="Neo")
         beats = avatar.generate_dance_sequence(4)
         self.assertEqual(len(beats), 4)
-        self.assertTrue(all(step in {"left", "right", "spin", "hop"} for step in beats))
+        self.assertTrue(all(step in set(avatar.dance_styles) for step in beats))
 
     def test_learning_updates_memory(self):
         avatar = avatar_dance_learning.AvatarDanceLearner(name="Neo")
