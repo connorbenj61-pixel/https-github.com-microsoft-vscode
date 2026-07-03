@@ -4,6 +4,11 @@ import shutil
 import subprocess
 import sys
 import threading
+import http.server
+import socketserver
+import socket
+import urllib.parse
+import json
 import time
 from pathlib import Path
 
@@ -128,6 +133,41 @@ def pause():
     input("\nPress Enter to continue...")
 
 
+BACKGROUND_TASKS: list[threading.Thread] = []
+
+
+def _cleanup_background_tasks():
+    global BACKGROUND_TASKS
+    BACKGROUND_TASKS = [t for t in BACKGROUND_TASKS if t.is_alive()]
+
+
+def run_in_background(target, *args, name: str | None = None, **kwargs):
+    def wrapper():
+        thread_name = name or getattr(target, '__name__', 'background_task')
+        print(f"[BACKGROUND] Starting {thread_name}")
+        try:
+            target(*args, **kwargs)
+            print(f"[BACKGROUND] Finished {thread_name}")
+        except Exception as exc:
+            print(f"[BACKGROUND] {thread_name} failed: {exc}")
+
+    thread = threading.Thread(target=wrapper, daemon=True, name=name or 'background_task')
+    BACKGROUND_TASKS.append(thread)
+    thread.start()
+    _cleanup_background_tasks()
+    return thread
+
+
+def show_background_tasks():
+    _cleanup_background_tasks()
+    if not BACKGROUND_TASKS:
+        print("No active background tasks.")
+        return
+    print("Active background tasks:")
+    for t in BACKGROUND_TASKS:
+        print(f"  {t.name} - {'alive' if t.is_alive() else 'done'}")
+
+
 def _get_desktop_path() -> Path:
     return Path(os.path.join(os.environ.get('USERPROFILE', ''), 'Desktop'))
 
@@ -236,7 +276,12 @@ def display_menu():
     print("12) Run demo_logger.py")
     print("13) Publish example scripts (hello_world, sorter, demo_logger)")
     print("14) Publish this UI (tools/terminal_writer_ui.py)")
-    print("15) Exit")
+    print("15) Publish script to browser (Pyodide HTML)")
+    print("16) Design & publish custom HTML (create mini-browser)")
+    print("17) Toggle periodic self-test")
+    print("18) Toggle multitask mode (run long tasks in background)")
+    print("19) Show active background tasks")
+    print("20) Exit")
     return input("Choose an option: ").strip()
 
 
@@ -279,6 +324,8 @@ def write_code_file():
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(content, encoding='utf-8')
     print(f"Saved code to {dest}")
+    if AUTOPUBLISH_ENABLED:
+        run_in_background(publish_script, dest, name=f"autopublish:{dest.name}")
 
 
 def run_python_file():
@@ -326,6 +373,12 @@ def main():
     # watcher state
     watcher_thread = None
     watcher_stop_event = None
+    # periodic self-test state
+    periodic_thread = None
+    periodic_stop_event = None
+    periodic_interval = 60  # seconds
+    # multitask flag
+    multitask_enabled = False
 
     def start_watcher():
         nonlocal watcher_thread, watcher_stop_event
@@ -354,6 +407,46 @@ def main():
         watcher_thread = threading.Thread(target=_watch, daemon=True)
         watcher_thread.start()
         print("Autopublish watcher started.")
+
+    def run_in_background(fn, *args, **kwargs):
+        """Run a function in background thread if multitask enabled, otherwise run inline."""
+        if multitask_enabled:
+            t = threading.Thread(target=lambda: fn(*args, **kwargs), daemon=True)
+            t.start()
+            return t
+        else:
+            return fn(*args, **kwargs)
+
+    def _periodic_selftest():
+        while not periodic_stop_event.is_set():
+            try:
+                # run a quick syntax check on this UI file
+                subprocess.run([sys.executable, '-m', 'py_compile', str(BASE_DIR / 'tools' / 'terminal_writer_ui.py')], check=False)
+            except Exception:
+                pass
+            # sleep with cancellation
+            periodic_stop_event.wait(periodic_interval)
+
+    def start_periodic_selftest():
+        nonlocal periodic_thread, periodic_stop_event
+        if periodic_thread and periodic_thread.is_alive():
+            print('Periodic self-test already running.')
+            return
+        periodic_stop_event = threading.Event()
+        periodic_thread = threading.Thread(target=_periodic_selftest, daemon=True)
+        periodic_thread.start()
+        print('Periodic self-test started.')
+
+    def stop_periodic_selftest():
+        nonlocal periodic_thread, periodic_stop_event
+        if periodic_thread and periodic_thread.is_alive():
+            periodic_stop_event.set()
+            periodic_thread.join(timeout=3)
+            periodic_thread = None
+            periodic_stop_event = None
+            print('Periodic self-test stopped.')
+        else:
+            print('Periodic self-test not running.')
 
     def stop_watcher():
         nonlocal watcher_thread, watcher_stop_event
@@ -393,7 +486,7 @@ def main():
                 p = Path(fn)
                 if not p.is_absolute():
                     p = Path.cwd() / p
-                publish_script(p)
+                run_in_background(publish_script, p)
             pause()
         elif choice == '8':
             AUTOPUBLISH_ENABLED = not AUTOPUBLISH_ENABLED
@@ -424,22 +517,174 @@ def main():
                 print(f"Failed to run demo_logger.py: {exc}")
             pause()
         elif choice == '13':
-            for s in ('hello_world.py', 'sorter.py', 'demo_logger.py'):
-                try:
-                    publish_script(BASE_DIR / s)
-                except Exception as exc:
-                    print(f"Publish failed for {s}: {exc}")
+            def _publish_examples():
+                for s in ('hello_world.py', 'sorter.py', 'demo_logger.py'):
+                    try:
+                        publish_script(BASE_DIR / s)
+                    except Exception as exc:
+                        print(f"Publish failed for {s}: {exc}")
+            run_in_background(_publish_examples)
             pause()
         elif choice == '14':
             # Publish the UI script itself
-            try:
-                publish_script(BASE_DIR / 'tools' / 'terminal_writer_ui.py')
-            except Exception as exc:
-                print(f"Publish failed for terminal_writer_ui.py: {exc}")
+            run_in_background(publish_script, BASE_DIR / 'tools' / 'terminal_writer_ui.py')
             pause()
         elif choice == '15':
+            # Publish arbitrary script to HTML using Pyodide
+            script = input("Path to script to publish in browser (relative to repo): ").strip()
+            if not script:
+                print("No script provided.")
+            else:
+                from tools.publish_web import publish_to_browser
+                try:
+                    full = BASE_DIR / script
+                    run_in_background(publish_to_browser, full)
+                except Exception as exc:
+                    print(f"Publish to browser failed: {exc}")
+            pause()
+        elif choice == '16':
+            # Design and publish custom HTML/JS/CSS with live preview server
+            name = input("Output name (no extension, e.g. my_browser): ").strip()
+            if not name:
+                print("No name provided.")
+                pause()
+                continue
+
+            out_dir = BASE_DIR / 'dist' / 'web'
+            out_dir.mkdir(parents=True, exist_ok=True)
+            out_path = out_dir / f"{name}.html"
+
+            # find a free local port
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.bind(('127.0.0.1', 0))
+            port = s.getsockname()[1]
+            s.close()
+
+            class LiveHandler(http.server.SimpleHTTPRequestHandler):
+                def __init__(self, *args, directory=None, **kwargs):
+                    super().__init__(*args, directory=str(out_dir), **kwargs)
+
+                def do_GET(self):
+                    parsed = urllib.parse.urlparse(self.path)
+                    if parsed.path.startswith('/_meta/'):
+                        _, _, tail = parsed.path.partition('/_meta/')
+                        requested = urllib.parse.unquote(tail)
+                        if Path(requested).name != requested:
+                            self.send_error(400, 'Invalid meta request')
+                            return
+                        target = out_dir / requested
+                        payload = {'mtime': None}
+                        if target.exists() and target.is_file():
+                            try:
+                                payload['mtime'] = target.stat().st_mtime
+                            except Exception:
+                                payload['mtime'] = None
+                        self.send_response(200)
+                        self.send_header('Content-Type', 'application/json; charset=utf-8')
+                        self.end_headers()
+                        self.wfile.write(json.dumps(payload).encode('utf-8'))
+                        return
+                    return super().do_GET()
+
+            httpd = socketserver.ThreadingTCPServer(('127.0.0.1', port), LiveHandler)
+            httpd.allow_reuse_address = True
+
+            def server_thread():
+                try:
+                    httpd.serve_forever()
+                except Exception:
+                    pass
+
+            t = threading.Thread(target=server_thread, daemon=True)
+            t.start()
+
+            print(f"Live preview server started at http://127.0.0.1:{port}/")
+            print("Enter your HTML/JS/CSS below. End with a single line containing only .END")
+            print("Each save will update the served page and the browser will auto-reload.")
+
+            def wrap_with_reload(html_content: str) -> str:
+                reload_snippet = (
+                    f"""
+<script>
+;(function() {{
+  const metaUrl = '/_meta/' + encodeURIComponent({json.dumps(name)});
+  let lastMtime = null;
+  async function check() {{
+    try {{
+      const r = await fetch(metaUrl, {{ cache: 'no-store' }});
+      if (!r.ok) return;
+      const j = await r.json();
+      if (lastMtime && j.mtime && j.mtime !== lastMtime) {{
+        location.reload(true);
+      }}
+      lastMtime = j.mtime;
+    }} catch (e) {{
+      console.warn('Live preview reload check failed', e);
+    }}
+  }}
+  setInterval(check, 1000);
+  check();
+}})();
+</script>
+"""
+                )
+                return html_content + '\n' + reload_snippet
+
+            while True:
+                lines = []
+                while True:
+                    try:
+                        ln = input()
+                    except EOFError:
+                        ln = '.END'
+                    if ln.strip() == '.END':
+                        break
+                    lines.append(ln)
+                if not lines:
+                    print("No content entered. Exiting live-edit.")
+                    break
+                content = '\n'.join(lines)
+                full = wrap_with_reload(content)
+                try:
+                    out_path.write_text(full, encoding='utf-8')
+                    print(f"Wrote {out_path}")
+                    try:
+                        subprocess.run(['powershell', '-NoProfile', '-Command', f"Get-Content -Raw '{out_path}' | Set-Clipboard"], check=False)
+                    except Exception:
+                        pass
+                    try:
+                        import webbrowser
+                        webbrowser.open(f'http://127.0.0.1:{port}/{out_path.name}')
+                    except Exception:
+                        pass
+                except Exception as exc:
+                    print(f"Failed to write file: {exc}")
+                print("Enter new content to update (or just .END to finish live session):")
+
+            try:
+                httpd.shutdown()
+            except Exception:
+                pass
+            pause()
+        elif choice == '17':
+            # Toggle periodic self-test
+            if periodic_thread and periodic_thread.is_alive():
+                stop_periodic_selftest()
+            else:
+                start_periodic_selftest()
+            pause()
+        elif choice == '18':
+            # Toggle multitask mode
+            multitask_enabled = not multitask_enabled
+            print(f"Multitask mode = {multitask_enabled}")
+            pause()
+        elif choice == '19':
+            show_background_tasks()
+            pause()
+        elif choice == '20':
             print("Goodbye. Keep coding and having fun.")
             stop_watcher()
+            stop_periodic_selftest()
             break
         else:
             print("Unknown option. Please choose a valid menu number.")
